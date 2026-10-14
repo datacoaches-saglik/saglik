@@ -1,0 +1,1532 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DataCoaches | Sağlık kuruluşları için veri analitiği">
+<meta property="og:description" content="Başvurudan gerçekleşen randevuya, sürecin tamamını görün. Etkileşimli örnek panelle inceleyin.">
+<!-- <meta property="og:image" content="https://ALANADINIZ/og-gorsel.png"> 1200x627 paylaşım görseli -->
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B6B6A'/%3E%3Ctext x='32' y='42' font-family='Arial,sans-serif' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EDC%3C/text%3E%3C/svg%3E">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>DataCoaches Hastane Analitiği</title>
+<meta name="description" content="Sağlık kuruluşları için veri analitiği ve BI danışmanlığı: başvurudan gerçekleşen randevuya, tedaviden satışa sürecin tamamını görünür kılın.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=IBM+Plex+Mono:wght@500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Düzen: 1120px tek konteyner; açılış iki kolon, örnek panel tam genişlik yüzey bandında, son çağrı koyu bant. */
+:root{
+  --bg:#F5F7F5;
+  --surface:#FFFFFF;
+  --surface-2:#EAEFEC;
+  --ink:#13233A;
+  --ink-2:#4A5A6A;
+  --line:#D5DCD9;
+  --line-strong:#AEBBB7;
+  --accent:#0B6B6A;
+  --accent-strong:#075352;
+  --accent-soft:#DCECE9;
+  --on-accent:#FFFFFF;
+  --track:#E3E9E6;
+  --band:#13233A;
+  --band-ink:#EAF1F0;
+  --band-ink-2:#B3C3C7;
+  --band-accent:#86D3C8;
+  --on-band-accent:#0E2422;
+  --overlay:rgba(12,22,34,.55);
+  --shadow:0 1px 2px rgba(19,35,58,.05),0 10px 28px -14px rgba(19,35,58,.22);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --radius:12px;
+  --wrap:1120px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E161E; --surface:#15202A; --surface-2:#111B24; --ink:#E4EBEE; --ink-2:#A3B2BC;
+    --line:#26343F; --line-strong:#3A4B57; --accent:#5DBDB2; --accent-strong:#86D3C8; --accent-soft:#16312F;
+    --on-accent:#08201E; --track:#22303B; --band:#0A2A2B; --band-ink:#E6F1EF; --band-ink-2:#A9C2C1;
+    --band-accent:#86D3C8; --on-band-accent:#0E2422; --overlay:rgba(0,0,0,.65);
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -14px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E161E; --surface:#15202A; --surface-2:#111B24; --ink:#E4EBEE; --ink-2:#A3B2BC;
+  --line:#26343F; --line-strong:#3A4B57; --accent:#5DBDB2; --accent-strong:#86D3C8; --accent-soft:#16312F;
+  --on-accent:#08201E; --track:#22303B; --band:#0A2A2B; --band-ink:#E6F1EF; --band-ink-2:#A9C2C1;
+  --band-accent:#86D3C8; --on-band-accent:#0E2422; --overlay:rgba(0,0,0,.65);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -14px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--f-display);color:var(--ink);margin:0;line-height:1.15;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+a{color:var(--accent)}
+ul,ol{margin:0;padding:0;list-style:none}
+.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums;font-size:.86em}
+.muted{color:var(--ink-2)}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:20px}
+section[id]{scroll-margin-top:84px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Butonlar */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:46px;padding:.65em 1.15em;border-radius:8px;font:600 1rem/1.2 var(--f-body);text-decoration:none;cursor:pointer;border:1px solid transparent;transition:background-color .15s,border-color .15s,color .15s}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{background:var(--accent-strong)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-strong)}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-band{background:var(--band-accent);color:var(--on-band-accent)}
+.btn-band:hover{filter:brightness(1.06)}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font:600 .9rem var(--f-body);cursor:pointer;text-decoration:underline;text-underline-offset:3px;min-height:32px}
+
+/* Üst menü */
+.site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
+.logo{font-family:var(--f-display);font-size:1.32rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink);white-space:nowrap}
+.logo-a{font-weight:700}
+.logo-b{font-weight:500;color:var(--accent)}
+.site-nav ul{display:flex;gap:4px;align-items:center}
+.site-nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--ink);text-decoration:none;font-weight:600;font-size:.97rem;border-radius:6px}
+.site-nav a:hover{background:var(--surface-2)}
+.site-nav a.nav-cta{border:1px solid var(--accent);color:var(--accent);margin-left:6px}
+.site-nav a.nav-cta:hover{background:var(--accent);color:var(--on-accent)}
+.menu-btn{display:none;min-height:44px;padding:0 14px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:8px;font:600 .95rem var(--f-body);cursor:pointer}
+@media (max-width:860px){
+  .menu-btn{display:inline-flex;align-items:center}
+  .site-nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--bg);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+  .site-nav.is-open{display:block}
+  .site-nav ul{flex-direction:column;align-items:stretch;padding:8px 20px 16px;gap:2px}
+  .site-nav a{width:100%;padding:0 8px}
+  .site-nav a.nav-cta{margin:8px 0 0;justify-content:center}
+}
+
+/* Açılış */
+.hero{padding-block:64px 72px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:56px;align-items:center}
+.eyebrow{display:inline-block;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.hero h1{font-size:clamp(2.1rem,4.4vw,3.5rem);font-weight:650;letter-spacing:-.025em}
+.hero-lead{margin-top:20px;font-size:1.15rem;color:var(--ink-2);max-width:56ch}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.mini{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 22px 18px;margin:0}
+.mini-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.mini-title{font:600 .95rem var(--f-body)}
+.demo-chip{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);border:1px dashed var(--line-strong);border-radius:999px;padding:3px 10px}
+.mini-kpi{display:flex;align-items:baseline;gap:10px;margin:14px 0 6px;flex-wrap:wrap}
+.mini-kpi strong{font-family:var(--f-display);font-size:2.3rem;font-weight:650;letter-spacing:-.02em;color:var(--accent)}
+.mini-kpi span{color:var(--ink-2);font-size:.95rem}
+.mini-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:.86rem;color:var(--ink-2)}
+.mini-views{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.mini-views span{font-size:.78rem;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--ink-2)}
+@media (max-width:960px){.hero-grid{grid-template-columns:1fr;gap:40px}.hero{padding-block:44px 56px}}
+
+/* Huni */
+.funnel{display:grid;gap:14px}
+.f-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.f-label{font-weight:600}
+.f-num{font-family:var(--f-data);font-variant-numeric:tabular-nums;font-size:1.02rem}
+.f-track{height:14px;background:var(--track);border-radius:4px;margin-top:6px;overflow:hidden}
+.f-bar{height:100%;background:var(--accent);border-radius:4px;transition:width .35s ease}
+.f-meta{margin-top:5px;font-size:.88rem;color:var(--ink-2)}
+.f-meta strong{color:var(--ink);font-weight:700}
+.f-loss{font-size:.86rem;color:var(--ink-2);margin:-4px 0 8px;padding-left:2px}
+.f-loss b{font-family:var(--f-data);font-weight:500;color:var(--ink)}
+.f-loss.neutral{font-style:italic}
+.funnel-compact{gap:10px}
+.funnel-compact .f-track{height:10px;margin-top:4px}
+.funnel-compact .f-label{font-size:.93rem}
+.funnel-compact .f-num{font-size:.95rem}
+.f-rate{font-family:var(--f-data);font-size:.8rem;color:var(--ink-2);margin-left:8px;font-weight:500}
+
+/* Bölüm başlıkları */
+.section{padding-block:80px}
+.section-head{max-width:720px;margin-bottom:40px}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.35rem);font-weight:650}
+.section-head p{margin-top:14px;color:var(--ink-2);font-size:1.08rem}
+.h2-plain{font-size:clamp(1.7rem,3vw,2.35rem);font-weight:650}
+@media (max-width:640px){.section{padding-block:56px}}
+
+/* Sorular */
+.questions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 44px}
+.question{border-top:2px solid var(--ink);padding-top:18px;min-width:0}
+.q-tag{font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.question h3{font-size:1.28rem;font-weight:600;margin-top:8px}
+.question p{margin-top:8px;color:var(--ink-2);font-size:.98rem}
+@media (max-width:960px){.questions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.questions{grid-template-columns:1fr;gap:30px}}
+
+/* Panel bandı */
+.panel-band{background:var(--surface-2);border-block:1px solid var(--line)}
+.panel-labels{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:18px}
+.panel-labels .demo-chip{background:var(--surface)}
+.panel-labels p{font-size:.92rem;color:var(--ink-2);max-width:62ch;margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+/* Rapor seçici: numaralı kartlar */
+.report-nav{padding:18px 22px 18px;background:var(--surface-2);border-bottom:1px solid var(--line);scroll-margin-top:80px}
+.report-nav-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;margin-bottom:12px}
+.report-nav-head strong{font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.report-nav-head span{font-size:.88rem;color:var(--ink-2)}
+.tabs{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.tab{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;text-align:left;padding:12px 14px 13px;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;font-family:var(--f-body);transition:border-color .15s,background-color .15s,transform .15s;touch-action:manipulation}
+.tab:hover{border-color:var(--accent);transform:translateY(-1px)}
+.tab-num{font-family:var(--f-data);font-size:.72rem;color:var(--accent)}
+.tab-title{font-weight:700;font-size:1.02rem;line-height:1.25}
+.tab-sub{font-size:.8rem;line-height:1.3;color:var(--ink-2)}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);box-shadow:0 8px 18px -12px var(--accent)}
+.tab[aria-selected="true"]:hover{transform:none}
+.tab[aria-selected="true"] .tab-num,.tab[aria-selected="true"] .tab-sub{color:var(--on-accent);opacity:.9}
+@media (max-width:980px){
+  .tabs{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(196px,1fr);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .tab{scroll-snap-align:start}
+  .report-nav-head span::after{content:" Diğerleri için yana kaydırın."}
+}
+/* Filtreler: kompakt */
+.filters{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 24px;padding:12px 22px;border-bottom:1px solid var(--line)}
+.fgroup{display:flex;flex-direction:column;gap:5px;min-width:0}
+.flabel{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg-btn{min-height:32px;padding:0 10px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:6px;font:600 .84rem var(--f-body);cursor:pointer;touch-action:manipulation}
+.seg-btn:hover{border-color:var(--ink)}
+.seg-btn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.seg-btn[aria-pressed="true"]::before{content:"✓ ";font-weight:700}
+.btn-sm{min-height:38px;padding:.45em .9em;font-size:.92rem}
+.report-next{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 16px;margin-top:30px;padding-top:18px;border-top:1px solid var(--line);font-size:.9rem}
+.panel-notes{margin:26px -22px -26px;padding:20px 22px 22px;background:var(--surface-2);border-top:1px solid var(--line);font-size:.92rem}
+.panel-notes h3{font-family:var(--f-body);font-size:.98rem;font-weight:700;margin-bottom:8px}
+.panel-notes ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 32px}
+.panel-notes li{position:relative;padding-left:16px;color:var(--ink-2);min-width:0}
+.panel-notes li::before{content:"";position:absolute;left:2px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.panel-notes .inv{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);color:var(--ink);font-size:.88rem;max-width:110ch}
+@media (max-width:760px){.panel-notes ul{grid-template-columns:1fr}}
+.tabpanel{padding:24px 22px 26px}
+.tab-intro{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px 28px;margin-bottom:18px;align-items:flex-end}
+.tab-intro .q{font-family:var(--f-display);font-size:1.3rem;font-weight:600;max-width:40ch}
+.sources-line{font-size:.85rem;color:var(--ink-2);margin-top:6px}
+.showing{font-size:.9rem;color:var(--ink-2)}
+.showing b{color:var(--ink);font-weight:600}
+.flow-grid.even{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:860px){.flow-grid.even{grid-template-columns:1fr}}
+.in-filters{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 24px;padding:10px 14px;margin-bottom:18px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px}
+.rule-text{font-size:.88rem;color:var(--ink-2);max-width:48ch;align-self:center}
+.rule-text b{color:var(--ink)}
+
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.kpi{padding:14px 16px;border-right:1px solid var(--line);min-width:0}
+.kpi:last-child{border-right:0}
+.kpi-label{font-size:.84rem;color:var(--ink-2);line-height:1.3;min-height:2.6em}
+.kpi-value{font-family:var(--f-display);font-size:1.6rem;font-weight:650;letter-spacing:-.02em;margin-top:6px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi-sub{font-size:.78rem;color:var(--ink-2);margin-top:2px}
+.kpi.emph{background:var(--accent-soft)}
+.kpi.emph .kpi-value{color:var(--accent)}
+@media (max-width:1000px){
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .kpi:nth-child(3n){border-right:0}
+  .kpi:nth-child(-n+3){border-bottom:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .kpi:nth-child(3n){border-right:1px solid var(--line)}
+  .kpi:nth-child(2n){border-right:0}
+  .kpi:nth-last-child(-n+2){border-bottom:0}
+  .kpi-value{font-size:1.38rem}
+}
+
+.flow-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:32px;margin-top:26px;align-items:start}
+.block-title{font-family:var(--f-body);font-size:1.06rem;font-weight:700;margin-bottom:14px}
+.subsection{margin-top:34px}
+.subsection > p.table-note{margin-top:-6px}
+.assume{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:16px 18px;font-size:.92rem}
+.assume h3{font-family:var(--f-body);font-size:.98rem;font-weight:700;margin-bottom:8px}
+.assume li{position:relative;padding-left:16px;color:var(--ink-2);margin-top:6px}
+.assume li::before{content:"";position:absolute;left:2px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.assume .inv{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);color:var(--ink);font-size:.88rem}
+@media (max-width:860px){.flow-grid{grid-template-columns:1fr}}
+
+/* Bar listesi */
+.barlist{display:grid;gap:12px}
+.barlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:baseline}
+.barlist .bl-label{font-weight:600}
+.barlist .bl-val{font-family:var(--f-data);font-size:.9rem;font-variant-numeric:tabular-nums;text-align:right}
+.barlist .bl-track{grid-column:1 / -1;height:10px;background:var(--track);border-radius:4px;overflow:hidden}
+.barlist .bl-track i{display:block;height:100%;background:var(--accent);border-radius:4px;transition:width .35s ease}
+.barlist .bl-sub{grid-column:1 / -1;font-size:.82rem;color:var(--ink-2)}
+
+/* Tablolar */
+.table-note{font-size:.9rem;color:var(--ink-2);margin-bottom:12px}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;-webkit-overflow-scrolling:touch}
+.scroll-hint{display:none;font-size:.82rem;color:var(--ink-2);margin-top:8px}
+@media (max-width:760px){.scroll-hint{display:block}}
+table.cmp{width:100%;border-collapse:collapse;font-size:.95rem}
+.cmp th,.cmp td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp th:first-child,.cmp td:first-child{text-align:left}
+.cmp thead th{font-size:.78rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-2);background:var(--surface-2);vertical-align:bottom}
+.cmp thead th small{display:block;text-transform:none;letter-spacing:0;font-weight:400;font-family:var(--f-data);font-size:.72rem;margin-top:3px}
+.cmp tbody th{font-weight:600;color:var(--ink)}
+.cmp tbody tr:last-child th,.cmp tbody tr:last-child td{border-bottom:0}
+.cmp tr.total th,.cmp tr.total td{background:var(--surface-2)}
+.cmp tr.is-selected th,.cmp tr.is-selected td{background:var(--accent-soft)}
+.cmp .pct{font-weight:700;font-variant-numeric:tabular-nums}
+.cmp .num{font-family:var(--f-data);font-variant-numeric:tabular-nums;font-size:.9rem}
+.cmp .frac{display:block;font-family:var(--f-data);font-size:.74rem;color:var(--ink-2);margin-top:2px;font-variant-numeric:tabular-nums;font-weight:400}
+.sel-chip{display:inline-block;margin-left:8px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:1px 7px;vertical-align:2px}
+.convbar{display:flex;align-items:center;justify-content:flex-end;gap:10px}
+.convbar .bar{width:80px;height:8px;background:var(--track);border-radius:4px;overflow:hidden;flex:none}
+.convbar .bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+
+/* İncelenebilecek noktalar */
+.insights{border-top:1px solid var(--line);padding:24px 22px 26px;background:var(--surface)}
+.insights-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 20px;margin-bottom:16px}
+.insights-head h3{font-size:1.2rem}
+.insights-head p{font-size:.88rem;color:var(--ink-2);max-width:56ch}
+.ins-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.ins{border-left:3px solid var(--accent);padding:2px 0 2px 16px;min-width:0}
+.ins-tag{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.ins h4{font-family:var(--f-body);font-size:1.04rem;font-weight:700;margin-top:4px}
+.ins p{font-size:.93rem;margin-top:6px}
+.ins .explore{color:var(--ink-2)}
+.ins .explore b{color:var(--ink);font-weight:600}
+@media (max-width:900px){.ins-list{grid-template-columns:1fr}}
+
+/* Veri kaynakları */
+.sources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--line-strong)}
+.source{padding:20px 22px 22px 0;border-bottom:1px solid var(--line);min-width:0}
+.source h3{font-size:1.1rem;font-weight:600}
+.source p{margin-top:6px;color:var(--ink-2);font-size:.96rem}
+.source .feeds{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.source .feeds span{font-size:.76rem;font-weight:600;padding:2px 8px;border:1px solid var(--line-strong);border-radius:6px;color:var(--ink)}
+.sources-note{margin-top:22px;font-size:.94rem;color:var(--ink-2);max-width:72ch}
+@media (max-width:900px){.sources{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:580px){.sources{grid-template-columns:1fr}.source{padding-right:0}}
+
+/* Deneyim */
+.exp-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+.exp-text{font-size:1.14rem;line-height:1.6}
+.tools{margin-top:26px}
+.tools h3{font:700 .78rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.tool-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tool-list li{font-family:var(--f-data);font-size:.84rem;padding:5px 10px;border:1px solid var(--line-strong);border-radius:6px;color:var(--ink)}
+.case dl{display:grid;gap:14px;margin:24px 0 0}
+.case dt{font-weight:700}
+.case dd{margin:2px 0 0;color:var(--ink-2)}
+@media (max-width:860px){.exp-grid{grid-template-columns:1fr;gap:24px}}
+
+/* Süreç */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.step{position:relative;padding-top:22px;border-top:1px solid var(--line-strong);min-width:0}
+.step-num{position:absolute;top:-17px;left:0;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:var(--bg);border:1.5px solid var(--accent);color:var(--accent);font-family:var(--f-data);font-size:.9rem}
+.step h3{font-size:1.16rem;font-weight:600;margin-top:12px}
+.step p{margin-top:8px;color:var(--ink-2);font-size:.97rem}
+.steps-note{margin-top:30px;font-size:.93rem;color:var(--ink-2);max-width:70ch}
+@media (max-width:900px){.steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:44px}}
+@media (max-width:540px){.steps{grid-template-columns:1fr}}
+
+/* Pilot */
+.pilot-band{background:var(--surface-2);border-block:1px solid var(--line)}
+.pilot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:start}
+.pilot-name{display:block;font-family:var(--f-display);font-size:1.35rem;font-weight:600;color:var(--accent);margin-top:18px;line-height:1.25}
+.pilot-desc{margin-top:12px;color:var(--ink-2);font-size:1.06rem}
+.deliver{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
+.deliver h3{font:700 .78rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:6px}
+.deliver li{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-weight:600}
+.deliver li:last-child{border-bottom:0}
+.deliver li span[aria-hidden]{color:var(--accent);font-weight:700}
+.pilot-note{margin-top:18px;font-size:.93rem;color:var(--ink-2);padding-left:14px;border-left:2px solid var(--line-strong)}
+@media (max-width:860px){.pilot{grid-template-columns:1fr;gap:28px}}
+
+/* Veri yaklaşımı */
+.data-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:start}
+.data-text{font-size:1.08rem;max-width:60ch}
+.demo-list h3{font:700 .78rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:8px}
+.demo-list li{padding:8px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.demo-list li:last-child{border-bottom:0}
+@media (max-width:860px){.data-grid{grid-template-columns:1fr;gap:24px}}
+
+/* Son çağrı */
+.final{background:var(--band);color:var(--band-ink)}
+.final-inner{padding-block:76px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:32px;align-items:end}
+.final h2{color:var(--band-ink);font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:650}
+.final p{margin-top:14px;color:var(--band-ink-2);font-size:1.1rem;max-width:52ch}
+.final-actions{display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+@media (max-width:760px){.final-inner{grid-template-columns:1fr;padding-block:56px}.final-actions{align-items:flex-start}}
+.site-footer{background:var(--band);color:var(--band-ink-2);border-top:1px solid var(--line-strong);font-size:.88rem}
+.site-footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-block:20px}
+.site-footer .logo{color:var(--band-ink);font-size:1.05rem}
+.site-footer .logo-b{color:var(--band-accent)}
+
+/* Pencere */
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:50;display:grid;place-items:center;padding:16px}
+.modal{background:var(--surface);color:var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);width:min(560px,100%);max-height:calc(100% - 32px);overflow:auto;padding:26px 26px 22px;border:1px solid var(--line)}
+.modal h2{font-size:1.5rem}
+.modal .lead{margin-top:10px;color:var(--ink-2)}
+.modal ul{margin-top:16px;display:grid;gap:8px}
+.modal li{position:relative;padding-left:18px}
+.modal li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.status{margin-top:20px;padding:12px 14px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--surface-2);font-size:.93rem}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;flex-wrap:wrap}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+
+<div id="root"></div>
+<noscript><p style="padding:24px">Bu sayfanın etkileşimli bölümleri için JavaScript gereklidir.</p></noscript>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+/* =====================================================================
+   1. YAPILANDIRMA — iletişim ve vaka bilgileri yalnızca buradan yönetilir.
+   ===================================================================== */
+const CONFIG = {
+  // Doluysa tüm "tanışma görüşmesi" butonları bu bağlantıyı yeni sekmede açar.
+  meetingUrl: "https://calendar.app.google/v6Ndsn9tjnnD9Mnb9"
+};
+
+/* =====================================================================
+   2. İÇERİK — sayfadaki metinler
+   ===================================================================== */
+const COPY = {
+  nav: [
+    { href: "sorular", label: "Çözdüğümüz Sorular" },
+    { href: "ornek-panel", label: "Örnek Panel" },
+    { href: "nasil-calisiyoruz", label: "Nasıl Çalışıyoruz" },
+    { href: "tanisalim", label: "Tanışalım", cta: true }
+  ],
+  hero: {
+    eyebrow: "Sağlık kuruluşları için veri analitiği ve BI danışmanlığı",
+    title: "Başvurudan gerçekleşen randevuya, sürecin tamamını görün.",
+    lead: "Farklı sistemlerde kalan verileri ilişkilendiriyor; başvuruların hangi aşamalarda kaybolduğunu, ekiplerin hangi metrikleri takip etmesi gerektiğini ve nereden iyileştirmeye başlayabileceğinizi görünür kılıyoruz.",
+    primary: "Örnek paneli inceleyin",
+    secondary: "20 dakikalık tanışma görüşmesi"
+  },
+  questions: {
+    title: "Çözdüğümüz sorular",
+    intro: "Dijital kanallar, çağrı merkezi, CRM ve randevu sistemlerindeki verileri ilişkilendirerek hangi aşamalarda kayıp yaşandığını anlamanıza, raporlamayı otomatikleştirmenize ve kararlarınızı güvenilir verilerle vermenize yardımcı oluyoruz.",
+    items: [
+      { tag: "İzlenebilirlik", q: "Başvuru geliyor. Peki kaçı gerçekleşen randevuya dönüşüyor?", d: "Talebin sonuca kadar izlenmesi; ulaşma, randevu oluşturma ve randevuya gelme adımlarının ayrı değerlendirilmesi." },
+      { tag: "Tedavi süreci", q: "Muayeneden sonra önerilen tedavilerin ne kadarı gerçekleşiyor?", d: "Muayene, öneri, planlama, işlem ve kontrol adımlarının aynı kayıt üzerinden izlenmesi." },
+      { tag: "Erişim", q: "Hangi branşta randevu bulmak zorlaşıyor?", d: "Slot doluluğu, ilk uygun randevuya kalan süre ve son dakika boşalan slotların takibi." },
+      { tag: "Satış ve tahsilat", q: "Satış, depozito ve ödeme aynı tabloda görülüyor mu?", d: "Temsilci ve tedavi grubu bazında teklif, satış, depozito ve ödeme; primin aynı veriden hesaplanması." },
+      { tag: "Şube farkı", q: "Şubeler ve branşlar arasındaki farkın nedeni ne?", d: "Talep hacmi, takip süreci ve dönüşüm farklarının karşılaştırılması." },
+      { tag: "Raporlama yükü", q: "Rapor hazırlamak mı, karar vermek mi daha çok zaman alıyor?", d: "Elle hazırlanan raporların otomatikleştirilmesi ve ortak metrik tanımları." }
+    ]
+  },
+  panel: {
+    title: "Bir hastanenin başvuru akışı nasıl görünür hale gelir?",
+    desc: "Aşağıdaki panel, kurumunuza özel kurulabilecek raporlama yapısının etkileşimli bir örneğidir. Beş rapor aynı veri modelinden beslenir.",
+    label: "Tamamen kurgusal demo verileri",
+    note: "Gerçek hasta veya müşteri verisi içermez. Gösterilen değerler sektör ortalaması ya da performans hedefi değildir."
+  },
+  sources: {
+    title: "Hangi verilerle çalışıyoruz?",
+    intro: "Online veri şart değil. Çoğu hastanede gereken veri zaten var; yalnızca farklı sistemlerde ve farklı tanımlarla duruyor. Mevcut CRM ve randevu kayıtlarıyla başlayabiliriz.",
+    items: [
+      { t: "Hastane bilgi yönetim sistemi", d: "Muayene, tetkik, işlem ve kontrol kayıtları.", feeds: ["Randevudan tedaviye", "Erişim ve kapasite"] },
+      { t: "CRM", d: "Başvurular, görüşme sonuçları, teklif ve satış kayıtları.", feeds: ["Talepten randevuya", "Satış ve prim"] },
+      { t: "Çağrı merkezi", d: "Gelen ve kaçan çağrılar, geri dönüş süreleri, arama denemeleri.", feeds: ["Talepten randevuya"] },
+      { t: "Randevu sistemi", d: "Hekim takvimleri, slotlar, iptaller ve online randevular.", feeds: ["Talepten randevuya", "Erişim ve kapasite"] },
+      { t: "Finans ve tahsilat", d: "Depozito, ödeme durumu ve tutarlar.", feeds: ["Satış ve prim"] },
+      { t: "Web, reklam ve dijital kanallar", d: "Formlar, WhatsApp başvuruları, GA4, Google Ads ve Meta harcamaları.", feeds: ["Talepten randevuya", "Mecra ve reklam"] }
+    ],
+    note: "Hangi kaynakların birbirine bağlanabileceği, kayıtların ortak bir anahtarla eşleşip eşleşmediğine ve erişim izinlerine bağlıdır. Bunu ilk adımda birlikte değerlendiririz."
+  },
+  process: {
+    title: "Nasıl çalışıyoruz?",
+    steps: [
+      { t: "Mevcut yapıyı anlarız.", d: "Kullanılan sistemler, raporlar ve yanıtlanmak istenen iş soruları." },
+      { t: "Ölçümleme ve veri yapısını netleştiririz.", d: "Ortak metrikler, veri kalitesi ve ilişkilendirilebilen kaynaklar." },
+      { t: "Raporlama ve analiz yapısını kurarız.", d: "Öncelikli şube, kanal veya süreçten başlayarak raporlar ve analizler." },
+      { t: "Bulguları aksiyona dönüştürürüz.", d: "Öncelikler, düzenli değerlendirmeler ve ihtiyaç oldukça kapsamın genişletilmesi." }
+    ],
+    note: "Hangi sistemlerin birbirine bağlanabileceği, kurumun mevcut altyapısına ve veri erişimine göre ilk adımda birlikte değerlendirilir."
+  },
+  pilot: {
+    title: "Tek bir süreçle başlayabiliriz.",
+    name: "Başvurudan Gerçekleşen Randevuya Ölçümleme Projesi",
+    desc: "Önce tek bir şube veya başvuru akışına odaklanır; mevcut verilerle nelerin ölçülebildiğini, nerelerde eksik olduğunu ve hangi iyileştirmelerin öncelik taşıdığını netleştiririz.",
+    outputsTitle: "Somut çıktılar",
+    outputs: [
+      "Veri kaynakları ve ölçümleme değerlendirmesi",
+      "Ortak metrik tanımları",
+      "Erişilebilir verilere göre ilk rapor",
+      "Önceliklendirilmiş iyileştirme planı"
+    ],
+    note: "Kapsam ve takvim, mevcut sistemler ve veri erişimi değerlendirildikten sonra netleştirilir."
+  },
+  data: {
+    title: "Veri yaklaşımı",
+    text: "Çalışmanın veri kapsamı, erişim yetkileri ve kullanılacak altyapı, kurumun ilgili ekipleriyle birlikte belirlenir. İhtiyaca göre toplulaştırılmış verilerle ilerlenir; kişisel ve hassas veriler için gerekli değerlendirmeler proje başlangıcında yapılır.",
+    demoTitle: "Bu sayfadaki örnek panel",
+    demo: [
+      "Ad, telefon, e-posta, kimlik numarası veya tanı bilgisi kullanmaz.",
+      "Hasta listesi içermez; yalnızca kurgusal, toplulaştırılmış sayılar gösterir.",
+      "Reklam harcamaları, satış temsilcileri, tutarlar ve prim kuralı kurgusaldır.",
+      "Hiçbir gerçek sisteme bağlanmaz. Sayfaya analiz aracı, reklam pikseli veya izleme kodu eklenmemiştir."
+    ]
+  },
+  final: {
+    title: "Kurumunuzda hangi sorunun yanıtı eksik?",
+    text: "20 dakikalık bir görüşmede mevcut raporlama yapınızı ve görünür hale getirmek istediğiniz süreci konuşalım.",
+    button: "Tanışma görüşmesi planlayın"
+  },
+  modal: {
+    title: "20 dakikalık tanışma görüşmesi",
+    lead: "Kısa bir ilk görüşmede şunları konuşuruz:",
+    items: [
+      "Başvuru, randevu ve raporlama verilerinin bugün hangi sistemlerde tutulduğu.",
+      "Yanıtını aradığınız iş soruları ve öncelikli süreç.",
+      "Tek bir şube veya başvuru akışıyla başlayan bir projenin uygun olup olmadığı."
+    ],
+    privacy: "Görüşme için hasta verisi paylaşmanız gerekmez.",
+    noLink: "Bu önizlemede toplantı bağlantısı henüz tanımlanmadı."
+  }
+};
+
+// MODEL START
+/* =====================================================================
+   3. DEMO VERİ MODELİ — tamamen kurgusal, yerel ve deterministik.
+   Sabit tohumlu üretici: sayfa her açıldığında aynı sayılar oluşur.
+   Tüm kartlar, huniler, tablolar ve yorumlar yalnızca bu kümeden hesaplanır.
+   ===================================================================== */
+const DIM = {
+  periods: [{ id: "2026-08", label: "Ağustos 2026", vol: 1.0 }, { id: "2026-09", label: "Eylül 2026", vol: 1.04 }],
+  branches: [{ id: "A", label: "Şube A" }, { id: "B", label: "Şube B" }, { id: "C", label: "Şube C" }],
+  specialties: [
+    { id: "kard", label: "Kardiyoloji" }, { id: "orto", label: "Ortopedi" }, { id: "onko", label: "Onkoloji" },
+    { id: "gcer", label: "Genel Cerrahi" }, { id: "chk", label: "Check-up" }
+  ],
+  // Satış ve prim görünümündeki uluslararası hasta tedavi grupları
+  treatments: [
+    { id: "sac", label: "Saç ekimi" }, { id: "est", label: "Estetik cerrahi" },
+    { id: "chk", label: "Check-up" }, { id: "uro", label: "Üroloji" }
+  ],
+  channels: [{ id: "web", label: "Web formu" }, { id: "tel", label: "Telefon" }, { id: "wa", label: "WhatsApp" }],
+  // Pazarlama kaynağı (başvuru kanalından ayrı bir boyut)
+  sources: [
+    { id: "google", label: "Google Ads (arama)", paid: true },
+    { id: "meta", label: "Meta (Facebook, Instagram)", paid: true },
+    { id: "display", label: "Google Display ve YouTube", paid: true },
+    { id: "organik", label: "Organik arama ve doğrudan", paid: false },
+    { id: "tanimsiz", label: "Kaynak bilgisi yok", paid: false }
+  ],
+  markets: [{ id: "eu", label: "Avrupa" }, { id: "me", label: "Orta Doğu" }, { id: "ca", label: "Orta Asya ve Kafkasya" }],
+  reps: [
+    { id: "t1", label: "Temsilci 1", market: "eu" }, { id: "t2", label: "Temsilci 2", market: "eu" },
+    { id: "t3", label: "Temsilci 3", market: "me" }, { id: "t4", label: "Temsilci 4", market: "me" },
+    { id: "t5", label: "Temsilci 5", market: "ca" }, { id: "t6", label: "Temsilci 6", market: "ca" }
+  ],
+  buckets: [{ id: 1, label: "1 saat içinde" }, { id: 2, label: "Aynı gün, 1 saatten sonra" }, { id: 3, label: "1 günden sonra" }]
+};
+
+// Üretici parametreleri (yalnızca demo davranışını şekillendirir)
+const P_CH = { web: { vol: 1, u: .80, r: .62, g: .81 }, tel: { vol: .85, u: .93, r: .70, g: .84 }, wa: { vol: .75, u: .66, r: .55, g: .79 } };
+const P_BR = {
+  A: { vol: 1.35, u: 1.00, r: 1.00, g: 1.00, speed: [.55, .32, .13], plan: .80, kontrol: 1.00, cap: 1.00, wait: 1.00, refill: .62, intl: .50 },
+  B: { vol: 1.05, u: .88, r: .98, g: 1.00, speed: [.32, .38, .30], plan: .72, kontrol: .92, cap: 1.04, wait: 1.30, refill: .46, intl: .30 },
+  C: { vol: .70, u: 1.03, r: 1.00, g: .88, speed: [.50, .35, .15], plan: .76, kontrol: .85, cap: .95, wait: .85, refill: .55, intl: .20 }
+};
+const P_SP = {
+  kard: { share: .24, r: 1.00, g: 1.00, direct: 1.5, oneri: .34, ger: .86, kontrol: .55, occ: .93, wait: 9, intl: .20, ticket: 12000 },
+  orto: { share: .26, r: 1.00, g: .96, direct: 1.4, oneri: .42, ger: .80, kontrol: .50, occ: .90, wait: 7, intl: .26, ticket: 9500 },
+  onko: { share: .10, r: 1.02, g: 1.07, direct: 1.2, oneri: .58, ger: .90, kontrol: .70, occ: .84, wait: 4, intl: .22, ticket: 18000 },
+  gcer: { share: .18, r: .98, g: 1.00, direct: 1.3, oneri: .46, ger: .78, kontrol: .40, occ: .80, wait: 6, intl: .22, ticket: 7000 },
+  chk:  { share: .22, r: 1.08, g: .97, direct: 1.1, oneri: .16, ger: .62, kontrol: .20, occ: .72, wait: 3, intl: .10, ticket: 1200 }
+};
+const P_TR = {
+  sac: { intl: .36, ticket: 2800 }, est: { intl: .30, ticket: 5200 },
+  chk: { intl: .20, ticket: 1200 }, uro: { intl: .14, ticket: 4500 }
+};
+const P_SRC = {
+  google: { w: .34, u: 1.00, r: 1.05, g: 1.00, cpl: 650 },
+  meta: { w: .26, u: .80, r: .80, g: .90, cpl: 420 },
+  display: { w: .08, u: .75, r: .75, g: .85, cpl: 520 },
+  organik: { w: .20, u: 1.05, r: 1.10, g: 1.05, cpl: 0 },
+  tanimsiz: { w: .12, u: 1.00, r: 1.00, g: 1.00, cpl: 0 }
+};
+const P_SPM = {
+  kard: { cpl: 1.2, meta: .9, org: 1.1 }, orto: { cpl: 1.1, meta: 1.0, org: 1.0 }, onko: { cpl: 1.4, meta: .6, org: 1.4 },
+  gcer: { cpl: 1.0, meta: .9, org: 1.0 }, chk: { cpl: .7, meta: 1.5, org: .8 }
+};
+const P_REP = {
+  t1: { vol: 1.2, kabul: .30, dep: .90, ode: .88 }, t2: { vol: .9, kabul: .26, dep: .84, ode: .80 },
+  t3: { vol: 1.3, kabul: .24, dep: .78, ode: .70 }, t4: { vol: 1.0, kabul: .33, dep: .88, ode: .90 },
+  t5: { vol: .8, kabul: .28, dep: .92, ode: .86 }, t6: { vol: 1.1, kabul: .21, dep: .74, ode: .66 }
+};
+const BUCKET_MULT = [1.12, 1.0, 0.74];
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function splitInt(total, weights) {
+  const sw = weights.reduce((a, b) => a + b, 0);
+  const raw = weights.map(w => (total * w) / sw);
+  const fl = raw.map(Math.floor);
+  const rem = total - fl.reduce((a, b) => a + b, 0);
+  const order = raw.map((x, i) => [x - fl[i], i]).sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+  for (let k = 0; k < rem; k++) fl[order[k][1]]++;
+  return fl;
+}
+// Toplamı ağırlıklara göre böler; hiçbir parça kendi üst sınırını (bir önceki adımın sayısını) aşmaz.
+function splitCapped(total, weights, caps) {
+  const n = caps.length, out = new Array(n).fill(0);
+  let rem = Math.min(total, caps.reduce((a, b) => a + b, 0));
+  let guard = 0;
+  while (rem > 0 && guard++ < 1000) {
+    const act = [];
+    for (let i = 0; i < n; i++) if (out[i] < caps[i]) act.push(i);
+    if (!act.length) break;
+    const swW = act.reduce((a, i) => a + Math.max(0, weights[i]), 0);
+    const wt = i => (swW > 0 ? Math.max(0, weights[i]) : caps[i] - out[i]);
+    const sw = act.reduce((a, i) => a + wt(i), 0);
+    let given = 0;
+    for (const i of act) { const add = Math.min(Math.floor((rem * wt(i)) / sw), caps[i] - out[i]); out[i] += add; given += add; }
+    if (given === 0) {
+      const order = act.slice().sort((a, b) => wt(b) - wt(a) || a - b);
+      for (const i of order) { if (given >= rem) break; if (out[i] < caps[i]) { out[i]++; given++; } }
+    }
+    rem -= given;
+  }
+  return out;
+}
+function generateDemo() {
+  const rnd = mulberry32(20261013);
+  const j = (lo, hi) => lo + (hi - lo) * rnd();
+  const cl = x => Math.min(0.97, Math.max(0.05, x));
+  const R = Math.round;
+  const talep = [], tedavi = [], kap = [], satis = [];
+  for (const p of DIM.periods) for (const b of DIM.branches) for (const s of DIM.specialties) {
+    const br = P_BR[b.id], sp = P_SP[s.id];
+    let fromTalep = 0;
+    for (const c of DIM.channels) {
+      const ch = P_CH[c.id];
+      const basvuru = R(70 * p.vol * br.vol * ch.vol * (sp.share / 0.2) * j(0.9, 1.1));
+      const ulasilan = R(basvuru * cl(ch.u * br.u * j(0.97, 1.03)));
+      const us = splitInt(ulasilan, br.speed);
+      const rs = us.map((u, i) => R(u * cl(ch.r * br.r * sp.r * BUCKET_MULT[i] * j(0.97, 1.03))));
+      const randevu = rs[0] + rs[1] + rs[2];
+      const gerceklesen = R(randevu * cl(ch.g * br.g * sp.g * j(0.97, 1.03)));
+      fromTalep += gerceklesen;
+      talep.push({ p: p.id, b: b.id, s: s.id, c: c.id, basvuru, ulasilan, u1: us[0], u2: us[1], u3: us[2], r1: rs[0], r2: rs[1], r3: rs[2], randevu, gerceklesen });
+    }
+    const muayene = fromTalep + R(fromTalep * sp.direct * j(0.92, 1.08));
+    const oneri = R(muayene * cl(sp.oneri * j(0.95, 1.05)));
+    const planlandi = R(oneri * cl(br.plan * j(0.96, 1.04)));
+    const gerceklesti = R(planlandi * cl(sp.ger * j(0.96, 1.04)));
+    const kontrolOnerilen = R(muayene * cl(sp.kontrol * j(0.95, 1.05)));
+    const kontrolGerceklesen = R(kontrolOnerilen * cl(0.72 * br.kontrol * j(0.96, 1.04)));
+    tedavi.push({ p: p.id, b: b.id, s: s.id, muayene, fromTalep, oneri, planlandi, gerceklesti, kontrolOnerilen, kontrolGerceklesen });
+
+    const K = R(muayene * 2.3 * j(0.95, 1.05));
+    const occ = cl(sp.occ * br.cap * j(0.97, 1.03) + 0.03);
+    const verilen = R(K * occ);
+    const iptal = R(verilen * j(0.06, 0.10));
+    const yeniden = R(iptal * cl(br.refill * j(0.9, 1.1)));
+    const kullanilan = verilen - iptal + yeniden;
+    const toplamBekleme = R(verilen * sp.wait * br.wait * (0.6 + 0.6 * occ) * j(0.92, 1.08));
+    kap.push({ p: p.id, b: b.id, s: s.id, K, verilen, iptal, yeniden, kullanilan, toplamBekleme });
+  }
+  for (const p of DIM.periods) for (const rep of DIM.reps) for (const s of DIM.treatments) for (const b of DIM.branches) {
+    const rp = P_REP[rep.id], sp = P_TR[s.id], br = P_BR[b.id];
+    const teklif = R(9 * p.vol * rp.vol * (sp.intl / 0.25) * (br.intl * 3) * j(0.85, 1.15));
+    const sat = R(teklif * cl(rp.kabul * j(0.9, 1.1)));
+    const depozito = R(sat * cl(rp.dep * j(0.95, 1.05)));
+    const odeme = R(depozito * cl(rp.ode * j(0.95, 1.05)));
+    const ticket = R((sp.ticket * j(0.9, 1.1)) / 10) * 10;
+    satis.push({ p: p.id, r: rep.id, m: rep.market, s: s.id, b: b.id, teklif, satis: sat, depozito, odeme,
+      satisTutar: sat * ticket, depTutar: depozito * ticket, odeTutar: odeme * ticket });
+  }
+  return { talep, tedavi, kap, satis };
+}
+// Mecra verisi, başvuru verisinin kaynağa göre kırılımıdır: her şube × branş × dönem için kaynak toplamları başvuru verisine eşittir.
+function generateMecra(talep) {
+  const rnd = mulberry32(20261014);
+  const j = (lo, hi) => lo + (hi - lo) * rnd();
+  const R = Math.round;
+  const out = [];
+  for (const p of DIM.periods) for (const b of DIM.branches) for (const s of DIM.specialties) {
+    const T = { basvuru: 0, ulasilan: 0, randevu: 0, gerceklesen: 0 };
+    for (const r of talep) if (r.p === p.id && r.b === b.id && r.s === s.id) for (const k in T) T[k] += r[k];
+    const sm = P_SPM[s.id];
+    const ps = DIM.sources.map(x => P_SRC[x.id]);
+    const w = DIM.sources.map((x, i) => ps[i].w * (x.id === "meta" ? sm.meta : 1) * (x.id === "organik" ? sm.org : 1) * j(0.85, 1.15));
+    const L = splitInt(T.basvuru, w);
+    const U = splitCapped(T.ulasilan, L.map((l, i) => l * ps[i].u), L);
+    const Rd = splitCapped(T.randevu, U.map((u, i) => u * ps[i].r), U);
+    const G = splitCapped(T.gerceklesen, Rd.map((x, i) => x * ps[i].g), Rd);
+    DIM.sources.forEach((x, i) => {
+      const harcama = ps[i].cpl > 0 ? R((L[i] * ps[i].cpl * sm.cpl * j(0.9, 1.1)) / 10) * 10 : 0;
+      out.push({ p: p.id, b: b.id, s: s.id, src: x.id, harcama, basvuru: L[i], ulasilan: U[i], randevu: Rd[i], gerceklesen: G[i] });
+    });
+  }
+  return out;
+}
+const DEMO = generateDemo();
+DEMO.mecra = generateMecra(DEMO.talep);
+const PAID = new Set(DIM.sources.filter(s => s.paid).map(s => s.id));
+const DEFAULT_FILTER = { period: "2026-09", branch: "all", specialty: "all", treatment: "all", channel: "all", market: "all" };
+
+/* --- Biçimlendirme (Türkçe) --- */
+const _int = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 });
+const _pct = new Intl.NumberFormat("tr-TR", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const _dec1 = new Intl.NumberFormat("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const _eur = new Intl.NumberFormat("tr-TR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+const ok = n => typeof n === "number" && isFinite(n);
+function fmtInt(n) { return ok(n) ? _int.format(n) : "—"; }
+function fmtPct(r) { return ok(r) ? _pct.format(r) : "—"; }
+function fmtPp(d) { return ok(d) ? _dec1.format(Math.abs(d * 100)) + " puan" : "—"; }
+function fmtEur(n) { return ok(n) ? _eur.format(n) : "—"; }
+const _try = new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 });
+function fmtTry(n) { return ok(n) ? _try.format(n) : "—"; }
+function fmtDays(n) { return ok(n) ? _dec1.format(n) + " gün" : "—"; }
+function ratio(n, d) { return ok(n) && ok(d) && d > 0 ? n / d : null; }
+function labelOf(list, id) { const x = list.find(o => o.id === id); return x ? x.label : ""; }
+
+/* --- Veri kümeleri: filtre anahtarları, toplanan alanlar, türetilen oranlar --- */
+const DATASETS = {
+  talep: {
+    rows: DEMO.talep, keys: { period: "p", branch: "b", specialty: "s", channel: "c" },
+    fields: ["basvuru", "ulasilan", "u1", "u2", "u3", "r1", "r2", "r3", "randevu", "gerceklesen"],
+    derive: t => ({ ulasilamayan: t.basvuru - t.ulasilan, gerceklesmeyen: t.randevu - t.gerceklesen,
+      rUlasma: ratio(t.ulasilan, t.basvuru), rRandevu: ratio(t.randevu, t.ulasilan), rGelme: ratio(t.gerceklesen, t.randevu),
+      rToplam: ratio(t.gerceklesen, t.basvuru), rb1: ratio(t.r1, t.u1), rb2: ratio(t.r2, t.u2), rb3: ratio(t.r3, t.u3) })
+  },
+  mecra: {
+    rows: DEMO.mecra, keys: { period: "p", branch: "b", specialty: "s", source: "src" },
+    fields: ["harcama", "basvuru", "ulasilan", "randevu", "gerceklesen"],
+    derive: t => ({ cpl: t.harcama > 0 ? ratio(t.harcama, t.basvuru) : null, cpRandevu: t.harcama > 0 ? ratio(t.harcama, t.randevu) : null,
+      cpGerc: t.harcama > 0 ? ratio(t.harcama, t.gerceklesen) : null, rToplam: ratio(t.gerceklesen, t.basvuru) })
+  },
+  tedavi: {
+    rows: DEMO.tedavi, keys: { period: "p", branch: "b", specialty: "s" },
+    fields: ["muayene", "fromTalep", "oneri", "planlandi", "gerceklesti", "kontrolOnerilen", "kontrolGerceklesen"],
+    derive: t => ({ rOneri: ratio(t.oneri, t.muayene), rPlan: ratio(t.planlandi, t.oneri), rGercek: ratio(t.gerceklesti, t.planlandi),
+      rOneriGercek: ratio(t.gerceklesti, t.oneri), rKontrol: ratio(t.kontrolGerceklesen, t.kontrolOnerilen), rFromTalep: ratio(t.fromTalep, t.muayene) })
+  },
+  kap: {
+    rows: DEMO.kap, keys: { period: "p", branch: "b", specialty: "s" },
+    fields: ["K", "verilen", "iptal", "yeniden", "kullanilan", "toplamBekleme"],
+    derive: t => ({ rDoluluk: ratio(t.kullanilan, t.K), rRefill: ratio(t.yeniden, t.iptal), rIptal: ratio(t.iptal, t.verilen),
+      avgWait: ratio(t.toplamBekleme, t.verilen) })
+  },
+  satis: {
+    rows: DEMO.satis, keys: { period: "p", branch: "b", treatment: "s", market: "m", rep: "r" },
+    fields: ["teklif", "satis", "depozito", "odeme", "satisTutar", "depTutar", "odeTutar"],
+    derive: t => ({ rKabul: ratio(t.satis, t.teklif), rDep: ratio(t.depozito, t.satis), rOde: ratio(t.odeme, t.depozito),
+      rTamam: ratio(t.odeme, t.satis), bekleyenTutar: t.depTutar - t.odeTutar })
+  }
+};
+function agg(name, f, pred) {
+  const d = DATASETS[name];
+  const t = { n: 0 };
+  for (const k of d.fields) t[k] = 0;
+  for (const r of d.rows) {
+    let hit = true;
+    for (const fk in d.keys) { const v = f[fk]; if (v !== undefined && v !== "all" && r[d.keys[fk]] !== v) { hit = false; break; } }
+    if (!hit || (pred && !pred(r))) continue;
+    t.n++;
+    for (const k of d.fields) { const v = r[k]; t[k] += ok(v) && v >= 0 ? v : 0; } // eksik veri = 0
+  }
+  return Object.assign(t, d.derive(t));
+}
+
+/* --- Huni tanımları --- */
+const FUNNELS = {
+  talep: {
+    firstNote: "Seçimdeki tüm başvurular",
+    stages: [["basvuru", "Başvuru"], ["ulasilan", "Ulaşıldı"], ["randevu", "Randevu oluşturuldu"], ["gerceklesen", "Randevu gerçekleşti"]],
+    transitions: [
+      { from: "basvuru", to: "ulasilan", rateKey: "rUlasma", name: "Ulaşma", rateLabel: "Ulaşılma oranı", formula: "Ulaşılan / Başvuru",
+        lossLabel: "ulaşılamayan başvuru", explore: "başvuruya ilk geri dönüş süresi, arama denemesi sayısı ve başvurunun geldiği saat dilimi." },
+      { from: "ulasilan", to: "randevu", rateKey: "rRandevu", name: "Randevu oluşturma", rateLabel: "Randevu oluşturma oranı", formula: "Randevu / Ulaşılan",
+        lossLabel: "randevuya dönüşmeyen görüşme", explore: "görüşme sonuçlarının kayıt biçimi, randevu almama gerekçelerinin sınıflanıp sınıflanmadığı ve uygun randevu seçenekleri." },
+      { from: "randevu", to: "gerceklesen", rateKey: "rGelme", name: "Randevuya gelme", rateLabel: "Randevuya gelme oranı", formula: "Gerçekleşen / Randevu",
+        lossLabel: "gerçekleşmeyen randevu", lossNote: "iptal ve gelmeme birlikte", explore: "iptal ve gelmemenin ayrı kaydedilip kaydedilmediği, hatırlatma adımları ve başvuru ile randevu tarihi arasındaki süre." }
+    ]
+  },
+  tedavi: {
+    firstNote: "Seçimdeki tüm ilk muayeneler",
+    stages: [["muayene", "İlk muayene"], ["oneri", "Tedavi veya işlem önerildi"], ["planlandi", "Tarih planlandı"], ["gerceklesti", "Tedavi veya işlem gerçekleşti"]],
+    transitions: [
+      { from: "muayene", to: "oneri", rateKey: "rOneri", name: "Öneri", rateLabel: "Öneri oranı", formula: "Önerilen / İlk muayene", neutral: true,
+        lossLabel: "öneri yapılmayan muayene", lossNote: "her muayene tedavi gerektirmez; kayıp sayılmaz" },
+      { from: "oneri", to: "planlandi", rateKey: "rPlan", name: "Planlama", rateLabel: "Planlama oranı", formula: "Planlanan / Önerilen",
+        lossLabel: "tarihi planlanmayan öneri", explore: "öneriden sonraki ilk temas zamanı, ikinci görüş ve sigorta onayı süreçleri, planlamanın kimin sorumluluğunda olduğu." },
+      { from: "planlandi", to: "gerceklesti", rateKey: "rGercek", name: "Gerçekleşme", rateLabel: "Gerçekleşme oranı", formula: "Gerçekleşen / Planlanan",
+        lossLabel: "gerçekleşmeyen planlı işlem", lossNote: "iptal ve erteleme birlikte", explore: "iptal ve erteleme nedenlerinin kaydı ve planlanan tarihin öneriden ne kadar sonra olduğu." }
+    ]
+  },
+  satis: {
+    firstNote: "Gönderilen tüm teklifler",
+    stages: [["teklif", "Teklif gönderildi"], ["satis", "Satış (teklif kabul)"], ["depozito", "Depozito alındı"], ["odeme", "Ödeme tamamlandı"]],
+    transitions: [
+      { from: "teklif", to: "satis", rateKey: "rKabul", name: "Teklif kabulü", rateLabel: "Kabul oranı", formula: "Satış / Teklif",
+        lossLabel: "kabul edilmeyen teklif", explore: "teklife ilk dönüş süresi, teklif içeriğindeki farklar ve pazar bazında fiyat algısı." },
+      { from: "satis", to: "depozito", rateKey: "rDep", name: "Depozito", rateLabel: "Depozito oranı", formula: "Depozito / Satış",
+        lossLabel: "depozitosu alınmamış satış", explore: "satıştan depozitoya geçen süre ve sunulan ödeme yöntemleri." },
+      { from: "depozito", to: "odeme", rateKey: "rOde", name: "Ödeme tamamlama", rateLabel: "Ödeme tamamlama oranı", formula: "Ödeme / Depozito",
+        lossLabel: "ödemesi tamamlanmamış satış", lossNote: "bekleyen ve iptal birlikte", explore: "depozito sonrası takip adımları, ödeme vadeleri ve iptal nedenleri." }
+    ]
+  }
+};
+
+/* --- Örnek prim kuralı --- */
+const PRIM_RATES = [{ id: "0.01", label: "%1" }, { id: "0.02", label: "%2" }, { id: "0.03", label: "%3" }];
+const PRIM_STAGES = [{ id: "depozito", label: "Depozito alındı" }, { id: "odeme", label: "Ödeme tamamlandı" }];
+function primCalc(m, rate, stage) {
+  const base = stage === "depozito" ? m.depTutar : m.odeTutar;
+  const r = Number(rate);
+  return { base, prim: ok(base) && ok(r) ? Math.round(base * r) : null };
+}
+function topSpecialty(f) {
+  let best = null;
+  for (const s of DIM.treatments) {
+    const m = agg("satis", Object.assign({}, f, { treatment: s.id }));
+    if (m.satis > 0 && (!best || m.satis > best.m.satis || (m.satis === best.m.satis && m.satisTutar > best.m.satisTutar))) best = { s, m };
+  }
+  return best;
+}
+
+// MODEL END
+
+/* =====================================================================
+   4. ARAYÜZ
+   ===================================================================== */
+const { useState, useEffect, useRef, useMemo } = React;
+const html = htm.bind(React.createElement);
+const ALL_BRANCH = [{ id: "all", label: "Tüm şubeler" }].concat(DIM.branches);
+const ALL_SPEC = [{ id: "all", label: "Tüm branşlar" }].concat(DIM.specialties);
+const ALL_TR = [{ id: "all", label: "Tüm tedavi grupları" }].concat(DIM.treatments);
+const ALL_CH = [{ id: "all", label: "Tüm kanallar" }].concat(DIM.channels);
+const ALL_MK = [{ id: "all", label: "Tüm pazarlar" }].concat(DIM.markets);
+const scaleTop = v => (v > 0 ? Math.min(1, Math.ceil(v * 10) / 10) : 1);
+const pw = x => (ok(x) ? Math.max(0, Math.min(100, x * 100)) : 0) + "%";
+const reduceMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function goTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+  const h = el.querySelector("h2");
+  if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+}
+
+function CtaButton({ label, className, onOpen }) {
+  if (CONFIG.meetingUrl) return html`<a className=${className} href=${CONFIG.meetingUrl} target="_blank" rel="noopener noreferrer">${label}</a>`;
+  return html`<button type="button" className=${className} onClick=${onOpen}>${label}</button>`;
+}
+
+function Logo({ onClick }) {
+  return html`<a href="#top" className="logo" onClick=${onClick}><span className="logo-a">Data</span><span className="logo-b">Coaches</span></a>`;
+}
+
+function Header() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = e => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+  const nav = (e, id) => { e.preventDefault(); setOpen(false); goTo(id); };
+  return html`<header className="site-header">
+    <div className="wrap header-row">
+      <${Logo} onClick=${e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+      <button type="button" className="menu-btn" aria-expanded=${open} aria-controls="site-nav" onClick=${() => setOpen(!open)}>${open ? "Kapat" : "Menü"}</button>
+      <nav id="site-nav" className=${"site-nav" + (open ? " is-open" : "")} aria-label="Sayfa bölümleri">
+        <ul>${COPY.nav.map(l => html`<li key=${l.href}><a href=${"#" + l.href} className=${l.cta ? "nav-cta" : ""} onClick=${e => nav(e, l.href)}>${l.label}</a></li>`)}</ul>
+      </nav>
+    </div>
+  </header>`;
+}
+
+function Funnel({ m, def, compact }) {
+  const base = m[def.stages[0][0]];
+  return html`<ol className=${"funnel" + (compact ? " funnel-compact" : "")}>
+    ${def.stages.map(([key, label], i) => {
+      const v = m[key];
+      const w = base > 0 ? Math.max((v / base) * 100, v > 0 ? 1.5 : 0) : 0;
+      const tr = i > 0 ? def.transitions[i - 1] : null;
+      const rate = tr ? m[tr.rateKey] : null;
+      const loss = tr ? m[tr.from] - m[tr.to] : 0;
+      return html`<li key=${key}>
+        ${tr && !compact ? html`<div className=${"f-loss" + (tr.neutral ? " neutral" : "")}><span aria-hidden="true">↳ </span><b>${fmtInt(loss)}</b> ${tr.lossLabel}${tr.lossNote ? ` (${tr.lossNote})` : ""}</div>` : null}
+        <div className="f-head">
+          <span className="f-label">${label}${compact && tr ? html`<span className="f-rate">${fmtPct(rate)}</span>` : null}</span>
+          <span className="f-num">${fmtInt(v)}</span>
+        </div>
+        <div className="f-track" aria-hidden="true"><div className="f-bar" style=${{ width: w + "%" }}></div></div>
+        ${compact ? null : html`<div className="f-meta">${i === 0
+          ? def.firstNote + " (%100)"
+          : html`${tr.rateLabel}: <strong>${fmtPct(rate)}</strong> <span className="mono">(${fmtInt(v)} / ${fmtInt(m[tr.from])})</span>`}</div>`}
+      </li>`;
+    })}
+  </ol>`;
+}
+
+const PANEL_TABS = [
+  { id: "talep", label: "Talepten randevuya", sub: "Başvuru, ulaşma ve randevu" },
+  { id: "mecra", label: "Mecra ve reklam", sub: "Harcama, CPL ve randevu maliyeti" },
+  { id: "tedavi", label: "Randevudan tedaviye", sub: "Öneri, planlama ve gerçekleşme" },
+  { id: "kapasite", label: "Erişim ve kapasite", sub: "Doluluk, bekleme ve iptaller" },
+  { id: "satis", label: "Satış ve prim", sub: "Teklif, depozito, ödeme ve prim" }
+];
+
+function Hero({ onOpen }) {
+  const m = useMemo(() => agg("talep", DEFAULT_FILTER), []);
+  return html`<section className="hero" id="top">
+    <div className="wrap hero-grid">
+      <div>
+        <span className="eyebrow">${COPY.hero.eyebrow}</span>
+        <h1>${COPY.hero.title}</h1>
+        <p className="hero-lead">${COPY.hero.lead}</p>
+        <div className="hero-actions">
+          <button type="button" className="btn btn-primary" onClick=${() => goTo("ornek-panel")}>${COPY.hero.primary}</button>
+          <${CtaButton} label=${COPY.hero.secondary} className="btn btn-ghost" onOpen=${onOpen} />
+        </div>
+      </div>
+      <figure className="mini" aria-label="Örnek panel önizlemesi">
+        <div className="mini-top">
+          <span className="mini-title">Talepten randevuya · ${labelOf(DIM.periods, DEFAULT_FILTER.period)}</span>
+          <span className="demo-chip">Kurgusal demo</span>
+        </div>
+        <div className="mini-kpi">
+          <strong>${fmtPct(m.rToplam)}</strong>
+          <span>başvurudan gerçekleşen randevuya <span className="mono">(${fmtInt(m.gerceklesen)} / ${fmtInt(m.basvuru)})</span></span>
+        </div>
+        <${Funnel} m=${m} def=${FUNNELS.talep} compact=${true} />
+        <div className="mini-views" aria-label="Paneldeki diğer raporlar">
+          ${PANEL_TABS.slice(1).map(t => html`<span key=${t.id}>+ ${t.label}</span>`)}
+        </div>
+        <figcaption className="mini-foot">
+          <span>Tüm şubeler, branşlar ve kanallar · adımlarda önceki adıma göre oran</span>
+          <button type="button" className="linkbtn" onClick=${() => goTo("ornek-panel")}>Paneli açın</button>
+        </figcaption>
+      </figure>
+    </div>
+  </section>`;
+}
+
+function Questions() {
+  const c = COPY.questions;
+  return html`<section className="section" id="sorular" aria-labelledby="sorular-h">
+    <div className="wrap">
+      <div className="section-head"><h2 id="sorular-h">${c.title}</h2><p>${c.intro}</p></div>
+      <div className="questions">
+        ${c.items.map(it => html`<article className="question" key=${it.tag}><span className="q-tag">${it.tag}</span><h3>${it.q}</h3><p>${it.d}</p></article>`)}
+      </div>
+    </div>
+  </section>`;
+}
+
+function FilterGroup({ id, label, options, value, onChange }) {
+  return html`<div className="fgroup" role="group" aria-labelledby=${id}>
+    <span id=${id} className="flabel">${label}</span>
+    <div className="seg">${options.map(o => html`<button type="button" key=${o.id} id=${id + "-" + o.id} className="seg-btn" aria-pressed=${value === o.id} onClick=${() => onChange(o.id)}>${o.label}</button>`)}</div>
+  </div>`;
+}
+
+function Kpis({ items }) {
+  return html`<div className="kpis">${items.map(k => html`<div className=${"kpi" + (k.emph ? " emph" : "")} key=${k.label}>
+    <div className="kpi-label">${k.label}</div>
+    <div className="kpi-value">${k.value}</div>
+    ${k.sub ? html`<div className="kpi-sub mono">${k.sub}</div>` : null}
+  </div>`)}</div>`;
+}
+
+function BarList({ title, note, items }) {
+  return html`<div>
+    <h3 className="block-title">${title}</h3>
+    ${note ? html`<p className="table-note">${note}</p>` : null}
+    <ul className="barlist">
+      ${items.map(it => html`<li key=${it.id}>
+        <span className="bl-label">${it.label}${it.selected ? html`<span className="sel-chip">Seçili</span>` : null}</span>
+        <span className="bl-val">${it.value}</span>
+        <span className="bl-track" aria-hidden="true"><i style=${{ width: pw(it.width) }}></i></span>
+        ${it.sub ? html`<span className="bl-sub">${it.sub}</span>` : null}
+      </li>`)}
+    </ul>
+  </div>`;
+}
+
+function CompareTable({ label, head, rows, minWidth }) {
+  return html`<div>
+    <div className="table-scroll" tabIndex="0" role="region" aria-label=${label}>
+      <table className="cmp" style=${{ minWidth: (minWidth || 640) + "px" }}>
+        <caption className="sr-only">${label}</caption>
+        <thead><tr>${head.map((h, i) => html`<th scope="col" key=${i}>${h.label}${h.sub ? html`<small>${h.sub}</small>` : null}</th>`)}</tr></thead>
+        <tbody>
+          ${rows.map(r => html`<tr key=${r.id} className=${(r.total ? "total" : "") + (r.selected ? " is-selected" : "")}>
+            <th scope="row">${r.label}${r.selected ? html`<span className="sel-chip">Seçili</span>` : null}${r.sub ? html`<span className="frac">${r.sub}</span>` : null}</th>
+            ${r.cells.map((c, i) => html`<td key=${i}>
+              ${c.bar !== undefined
+                ? html`<div className="convbar"><span className="bar" aria-hidden="true"><i style=${{ width: pw(c.bar) }}></i></span><span className="pct">${c.main}</span></div>`
+                : html`<span className=${c.num ? "num" : "pct"}>${c.main}</span>`}
+              ${c.sub ? html`<span className="frac">${c.sub}</span>` : null}
+            </td>`)}
+          </tr>`)}
+        </tbody>
+      </table>
+    </div>
+    <p className="scroll-hint">Tabloyu yana kaydırarak tüm sütunları görebilirsiniz.</p>
+  </div>`;
+}
+
+const rateCell = (m, num, den, key) => ({ main: fmtPct(m[key]), sub: fmtInt(m[num]) + " / " + fmtInt(m[den]) });
+const numCell = v => ({ main: fmtInt(v), num: true });
+const Empty = () => html`<p className="muted">Bu seçim için kayıt bulunmuyor.</p>`;
+
+function TabIntro({ q, sources, f, extra, third }) {
+  return html`<div className="tab-intro">
+    <div>
+      <p className="q">${q}</p>
+      <p className="sources-line">Tipik veri kaynakları: ${sources}</p>
+    </div>
+    <p className="showing" aria-live="polite">Gösterilen: <b>${labelOf(DIM.periods, f.period)}</b> · <b>${labelOf(ALL_BRANCH, f.branch)}</b> · <b>${third || labelOf(ALL_SPEC, f.specialty)}</b>${extra ? html` · <b>${extra}</b>` : null}</p>
+  </div>`;
+}
+
+/* --- Rapor 1: Talepten randevuya --- */
+function TabTalep({ f, set }) {
+  const def = FUNNELS.talep;
+  const m = agg("talep", f);
+  const bmax = Math.max(0, ...[m.rb1, m.rb2, m.rb3].map(x => x || 0));
+  const bscale = scaleTop(bmax);
+  const brRows = DIM.branches.map(b => ({ id: b.id, label: b.label, selected: f.branch === b.id, m: agg("talep", Object.assign({}, f, { branch: b.id })) }))
+    .concat([{ id: "all", label: "Tüm şubeler", total: true, m: agg("talep", Object.assign({}, f, { branch: "all" })) }]);
+  const cscale = scaleTop(Math.max(0, ...brRows.map(r => r.m.rToplam || 0)));
+  return html`<div>
+    <${TabIntro} q="Başvuruların kaçı gerçekleşen randevuya dönüşüyor, kayıp nerede?" sources="CRM, çağrı merkezi, web formları, randevu sistemi" f=${f} extra=${labelOf(ALL_CH, f.channel)} />
+    <div className="in-filters"><${FilterGroup} id="flt-kanal" label="Başvuru kanalı" options=${ALL_CH} value=${f.channel} onChange=${set("channel")} /></div>
+    <${Kpis} items=${[
+      { label: "Toplam başvuru", value: fmtInt(m.basvuru) },
+      { label: "Ulaşılan başvuru", value: fmtInt(m.ulasilan), sub: fmtPct(m.rUlasma) + " ulaşılma" },
+      { label: "Oluşturulan randevu", value: fmtInt(m.randevu) },
+      { label: "Gerçekleşen randevu", value: fmtInt(m.gerceklesen) },
+      { label: "Başvurudan gerçekleşen randevuya", value: fmtPct(m.rToplam), sub: fmtInt(m.gerceklesen) + " / " + fmtInt(m.basvuru), emph: true },
+      { label: "Ulaşılamayan başvuru", value: fmtInt(m.ulasilamayan), sub: "Başvurulara oranı " + fmtPct(ratio(m.ulasilamayan, m.basvuru)) }
+    ]} />
+    <div className="flow-grid">
+      <div>
+        <h3 className="block-title">Başvuru → Ulaşıldı → Randevu oluşturuldu → Randevu gerçekleşti</h3>
+        ${m.basvuru > 0 ? html`<${Funnel} m=${m} def=${def} />` : html`<${Empty} />`}
+      </div>
+      <${BarList} title="İlk geri dönüş süresine göre randevu oluşturma"
+        note="Ulaşılan başvurular, ilk başarılı temasın başvurudan ne kadar sonra kurulduğuna göre ayrılır."
+        items=${DIM.buckets.map(b => {
+          const u = m["u" + b.id], r = m["r" + b.id], rr = ratio(r, u);
+          return { id: "b" + b.id, label: b.label, value: fmtPct(rr), width: rr === null ? 0 : rr / bscale, sub: fmtInt(r) + " randevu / " + fmtInt(u) + " ulaşılan başvuru" };
+        })} />
+    </div>
+    <div className="subsection">
+      <h3 className="block-title">Şube karşılaştırması</h3>
+      <p className="table-note">Dönem, branş ve kanal filtreleri uygulanır; şube filtresi seçili satırı işaretler.</p>
+      <${CompareTable} label="Şube karşılaştırması" minWidth=${720}
+        head=${[{ label: "Şube" }, { label: "Başvuru" }].concat(def.transitions.map(t => ({ label: t.rateLabel, sub: t.formula }))).concat([{ label: "Başvurudan gerçekleşen randevuya", sub: "Gerçekleşen / Başvuru" }])}
+        rows=${brRows.map(r => ({ id: r.id, label: r.label, selected: r.selected, total: r.total,
+          cells: [numCell(r.m.basvuru)].concat(def.transitions.map(t => rateCell(r.m, t.to, t.from, t.rateKey)))
+            .concat([{ main: fmtPct(r.m.rToplam), sub: fmtInt(r.m.gerceklesen) + " / " + fmtInt(r.m.basvuru), bar: (r.m.rToplam || 0) / cscale }]) }))} />
+    </div>
+  </div>`;
+}
+
+/* --- Rapor 2: Mecra ve reklam performansı --- */
+function TabMecra({ f }) {
+  const all = agg("mecra", f);
+  const paid = agg("mecra", f, r => PAID.has(r.src));
+  const und = agg("mecra", Object.assign({}, f, { source: "tanimsiz" }));
+  const rows = DIM.sources.map(s => ({ s, m: agg("mecra", Object.assign({}, f, { source: s.id })) }));
+  const paidRows = rows.filter(r => r.s.paid);
+  const maxCost = Math.max(0, ...paidRows.map(r => r.m.cpGerc || 0));
+  const sc = scaleTop(Math.max(0, ...rows.map(r => r.m.rToplam || 0)));
+  const row = (id, label, m, opts) => {
+    const o = opts || {};
+    const unit = v => (o.noUnit ? { main: "—", sub: "Ücretli satıra bakın" } : { main: fmtTry(v), num: true });
+    return { id, label, total: o.total, cells: [
+      m.harcama > 0 ? { main: fmtTry(m.harcama), num: true } : { main: "—", sub: "Harcama yok" },
+      numCell(m.basvuru),
+      m.harcama > 0 ? unit(m.cpl) : { main: "—" },
+      numCell(m.randevu),
+      m.harcama > 0 ? unit(m.cpRandevu) : { main: "—" },
+      numCell(m.gerceklesen),
+      m.harcama > 0 ? unit(m.cpGerc) : { main: "—" },
+      { main: fmtPct(m.rToplam), sub: fmtInt(m.gerceklesen) + " / " + fmtInt(m.basvuru), bar: (m.rToplam || 0) / sc }] };
+  };
+  return html`<div>
+    <${TabIntro} q="Hangi mecraya yapılan yatırım gerçekleşen randevuya dönüşüyor?" sources="Google Ads, Meta, GA4, CRM, randevu sistemi" f=${f} />
+    <${Kpis} items=${[
+      { label: "Reklam harcaması", value: fmtTry(paid.harcama) },
+      { label: "Ücretli kaynaklardan başvuru", value: fmtInt(paid.basvuru), sub: fmtPct(ratio(paid.basvuru, all.basvuru)) + " tüm başvuruların" },
+      { label: "Başvuru başına maliyet (CPL)", value: fmtTry(paid.cpl) },
+      { label: "Oluşturulan randevu başına maliyet", value: fmtTry(paid.cpRandevu) },
+      { label: "Gerçekleşen randevu başına maliyet", value: fmtTry(paid.cpGerc), sub: fmtInt(paid.gerceklesen) + " gerçekleşen randevu", emph: true },
+      { label: "Kaynak bilgisi olmayan başvuru", value: fmtInt(und.basvuru), sub: fmtPct(ratio(und.basvuru, all.basvuru)) + " tüm başvuruların" }
+    ]} />
+    ${all.basvuru > 0 ? html`<div className="flow-grid even">
+      <${BarList} title="Gerçekleşen randevu başına maliyet"
+        note="Yalnızca ücretli kaynaklar. Kısa çubuk daha düşük maliyet demektir; başvuru maliyeti ile gerçekleşen randevu maliyetinin sıralaması farklı olabilir."
+        items=${paidRows.map(r => ({ id: r.s.id, label: r.s.label, value: fmtTry(r.m.cpGerc), width: maxCost > 0 && r.m.cpGerc !== null ? r.m.cpGerc / maxCost : 0,
+          sub: "CPL " + fmtTry(r.m.cpl) + " · başvurudan gerçekleşene " + fmtPct(r.m.rToplam) }))} />
+      <${BarList} title="Başvuruların kaynağa göre dağılımı"
+        note="Tüm başvurular; ücretli, organik ve kaynağı bilinmeyenler birlikte."
+        items=${rows.map(r => { const sh = ratio(r.m.basvuru, all.basvuru); return { id: r.s.id, label: r.s.label, value: fmtPct(sh), width: sh || 0,
+          sub: fmtInt(r.m.basvuru) + " başvuru · " + fmtInt(r.m.gerceklesen) + " gerçekleşen randevu" }; })} />
+    </div>` : html`<div style=${{ marginTop: "22px" }}><${Empty} /></div>`}
+    <div className="subsection">
+      <h3 className="block-title">Kaynak karşılaştırması</h3>
+      <p className="table-note">Dönem, şube ve branş filtreleri uygulanır. Tutarlar kurgusaldır (TL).</p>
+      <${CompareTable} label="Mecra ve kaynak karşılaştırması" minWidth=${1000}
+        head=${[{ label: "Kaynak" }, { label: "Harcama" }, { label: "Başvuru" }, { label: "CPL", sub: "Harcama / Başvuru" }, { label: "Randevu" },
+          { label: "Randevu başına", sub: "Harcama / Randevu" }, { label: "Gerçekleşen" }, { label: "Gerçekleşen başına", sub: "Harcama / Gerçekleşen" },
+          { label: "Başvurudan gerçekleşene", sub: "Gerçekleşen / Başvuru" }]}
+        rows=${rows.map(r => row(r.s.id, r.s.label, r.m))
+          .concat([row("paid", "Ücretli kaynaklar", paid, { total: true }), row("all", "Tüm kaynaklar", all, { total: true, noUnit: true })])} />
+    </div>
+  </div>`;
+}
+
+/* --- Rapor 3: Randevudan tedaviye --- */
+function TabTedavi({ f }) {
+  const def = FUNNELS.tedavi;
+  const m = agg("tedavi", f);
+  const rows = DIM.specialties.map(s => ({ id: s.id, label: s.label, selected: f.specialty === s.id, m: agg("tedavi", Object.assign({}, f, { specialty: s.id })) }))
+    .concat([{ id: "all", label: "Tüm branşlar", total: true, m: agg("tedavi", Object.assign({}, f, { specialty: "all" })) }]);
+  const sc = scaleTop(Math.max(0, ...rows.map(r => r.m.rOneriGercek || 0)));
+  const brK = DIM.branches.map(b => ({ b, m: agg("tedavi", Object.assign({}, f, { branch: b.id })) }));
+  return html`<div>
+    <${TabIntro} q="Muayeneden sonra önerilen tedavi ve işlemlerin ne kadarı gerçekleşiyor?" sources="Hastane bilgi yönetim sistemi, randevu sistemi, CRM" f=${f} />
+    <${Kpis} items=${[
+      { label: "İlk muayene", value: fmtInt(m.muayene), sub: fmtPct(m.rFromTalep) + " başvuru takibinden" },
+      { label: "Tedavi veya işlem önerilen", value: fmtInt(m.oneri), sub: fmtPct(m.rOneri) + " muayenelerin" },
+      { label: "Tarihi planlanan", value: fmtInt(m.planlandi) },
+      { label: "Gerçekleşen tedavi veya işlem", value: fmtInt(m.gerceklesti) },
+      { label: "Öneriden gerçekleşmeye", value: fmtPct(m.rOneriGercek), sub: fmtInt(m.gerceklesti) + " / " + fmtInt(m.oneri), emph: true },
+      { label: "Kontrol randevusu uyumu", value: fmtPct(m.rKontrol), sub: fmtInt(m.kontrolGerceklesen) + " / " + fmtInt(m.kontrolOnerilen) }
+    ]} />
+    <div className="flow-grid">
+      <div>
+        <h3 className="block-title">İlk muayene → Öneri → Planlama → Gerçekleşme</h3>
+        ${m.muayene > 0 ? html`<${Funnel} m=${m} def=${def} />` : html`<${Empty} />`}
+      </div>
+      <${BarList} title="Kontrol randevusu uyumu, şubelere göre"
+        note="Önerilen kontrol randevularının gerçekleşme oranı. Dönem ve branş filtreleri uygulanır."
+        items=${brK.map(x => ({ id: x.b.id, label: x.b.label, selected: f.branch === x.b.id, value: fmtPct(x.m.rKontrol), width: x.m.rKontrol || 0,
+          sub: fmtInt(x.m.kontrolGerceklesen) + " / " + fmtInt(x.m.kontrolOnerilen) + " önerilen kontrol" }))} />
+    </div>
+    <div className="subsection">
+      <h3 className="block-title">Branş karşılaştırması</h3>
+      <p className="table-note">Dönem ve şube filtreleri uygulanır; branş filtresi seçili satırı işaretler.</p>
+      <${CompareTable} label="Branş karşılaştırması, tedavi takibi" minWidth=${760}
+        head=${[{ label: "Branş" }, { label: "İlk muayene" }, { label: "Öneri oranı", sub: "Önerilen / Muayene" }, { label: "Planlama oranı", sub: "Planlanan / Önerilen" },
+          { label: "Gerçekleşme oranı", sub: "Gerçekleşen / Planlanan" }, { label: "Öneriden gerçekleşmeye", sub: "Gerçekleşen / Önerilen" }, { label: "Kontrol uyumu", sub: "Gerçekleşen / Önerilen kontrol" }]}
+        rows=${rows.map(r => ({ id: r.id, label: r.label, selected: r.selected, total: r.total, cells: [
+          numCell(r.m.muayene), rateCell(r.m, "oneri", "muayene", "rOneri"), rateCell(r.m, "planlandi", "oneri", "rPlan"),
+          rateCell(r.m, "gerceklesti", "planlandi", "rGercek"),
+          { main: fmtPct(r.m.rOneriGercek), sub: fmtInt(r.m.gerceklesti) + " / " + fmtInt(r.m.oneri), bar: (r.m.rOneriGercek || 0) / sc },
+          rateCell(r.m, "kontrolGerceklesen", "kontrolOnerilen", "rKontrol")] }))} />
+    </div>
+  </div>`;
+}
+
+/* --- Rapor 4: Erişim ve kapasite --- */
+function TabKapasite({ f }) {
+  const m = agg("kap", f);
+  const rows = DIM.specialties.map(s => ({ id: s.id, label: s.label, selected: f.specialty === s.id, m: agg("kap", Object.assign({}, f, { specialty: s.id })) }))
+    .concat([{ id: "all", label: "Tüm branşlar", total: true, m: agg("kap", Object.assign({}, f, { specialty: "all" })) }]);
+  const brR = DIM.branches.map(b => ({ b, m: agg("kap", Object.assign({}, f, { branch: b.id })) }));
+  return html`<div>
+    <${TabIntro} q="Hangi branşta randevu bulmak zorlaşıyor, boşalan slotlar ne oluyor?" sources="Randevu sistemi, hekim takvimleri, hastane bilgi yönetim sistemi" f=${f} />
+    <${Kpis} items=${[
+      { label: "Planlanan slot kapasitesi", value: fmtInt(m.K) },
+      { label: "Verilen randevu", value: fmtInt(m.verilen) },
+      { label: "Son dakika boşalan slot", value: fmtInt(m.iptal), sub: fmtPct(m.rIptal) + " verilenlerin" },
+      { label: "Yeniden doldurulan", value: fmtInt(m.yeniden), sub: fmtPct(m.rRefill) + " boşalanların" },
+      { label: "Slot doluluğu", value: fmtPct(m.rDoluluk), sub: fmtInt(m.kullanilan) + " / " + fmtInt(m.K), emph: true },
+      { label: "İlk uygun randevuya ortalama", value: fmtDays(m.avgWait) }
+    ]} />
+    <div className="flow-grid even">
+      <${BarList} title="Branşlara göre doluluk"
+        items=${rows.filter(r => !r.total).map(r => ({ id: r.id, label: r.label, selected: r.selected, value: fmtPct(r.m.rDoluluk), width: r.m.rDoluluk || 0,
+          sub: fmtInt(r.m.kullanilan) + " / " + fmtInt(r.m.K) + " slot · ilk uygun randevuya ortalama " + fmtDays(r.m.avgWait) }))} />
+      <${BarList} title="Son dakika boşalan slotların yeniden doldurulması"
+        items=${brR.map(x => ({ id: x.b.id, label: x.b.label, selected: f.branch === x.b.id, value: fmtPct(x.m.rRefill), width: x.m.rRefill || 0,
+          sub: fmtInt(x.m.yeniden) + " / " + fmtInt(x.m.iptal) + " boşalan slot yeniden dolduruldu" }))} />
+    </div>
+    <div className="subsection">
+      <h3 className="block-title">Branş karşılaştırması</h3>
+      <p className="table-note">Dönem ve şube filtreleri uygulanır; branş filtresi seçili satırı işaretler.</p>
+      <${CompareTable} label="Branş karşılaştırması, kapasite" minWidth=${700}
+        head=${[{ label: "Branş" }, { label: "Slot kapasitesi" }, { label: "Doluluk", sub: "Kullanılan / Kapasite" }, { label: "Son dakika boşalan", sub: "Boşalan / Verilen" },
+          { label: "Yeniden doldurma", sub: "Doldurulan / Boşalan" }, { label: "İlk uygun randevu", sub: "Ortalama gün" }]}
+        rows=${rows.map(r => ({ id: r.id, label: r.label, selected: r.selected, total: r.total, cells: [
+          numCell(r.m.K), { main: fmtPct(r.m.rDoluluk), sub: fmtInt(r.m.kullanilan) + " / " + fmtInt(r.m.K), bar: r.m.rDoluluk || 0 },
+          rateCell(r.m, "iptal", "verilen", "rIptal"), rateCell(r.m, "yeniden", "iptal", "rRefill"), { main: fmtDays(r.m.avgWait) }] }))} />
+    </div>
+  </div>`;
+}
+
+/* --- Rapor 5: Satış ve prim (uluslararası hasta ekibi örneği) --- */
+function TabSatis({ f, set, prim, setPrim }) {
+  const def = FUNNELS.satis;
+  const m = agg("satis", f);
+  const total = primCalc(m, prim.rate, prim.stage);
+  const stageLabel = labelOf(PRIM_STAGES, prim.stage);
+  const specRows = DIM.treatments.map(s => ({ s, m: agg("satis", Object.assign({}, f, { treatment: s.id })) }))
+    .sort((a, b) => b.m.satis - a.m.satis || b.m.satisTutar - a.m.satisTutar);
+  const maxSat = Math.max(1, ...specRows.map(r => r.m.satis));
+  const reps = DIM.reps.filter(r => f.market === "all" || r.market === f.market).map(r => {
+    const rm = agg("satis", Object.assign({}, f, { rep: r.id }));
+    return { r, m: rm, p: primCalc(rm, prim.rate, prim.stage), top: topSpecialty(Object.assign({}, f, { rep: r.id })) };
+  });
+  const teamTop = topSpecialty(f);
+  return html`<div>
+    <${TabIntro} q="Uluslararası hasta ekibinde teklif, satış, depozito ve ödeme nerede?" sources="CRM, teklif kayıtları, finans ve tahsilat" f=${f} third=${labelOf(ALL_TR, f.treatment)} extra=${labelOf(ALL_MK, f.market)} />
+    <div className="in-filters">
+      <${FilterGroup} id="flt-pazar" label="Pazar" options=${ALL_MK} value=${f.market} onChange=${set("market")} />
+      <${FilterGroup} id="flt-prim-oran" label="Örnek prim oranı" options=${PRIM_RATES} value=${prim.rate} onChange=${v => setPrim(Object.assign({}, prim, { rate: v }))} />
+      <${FilterGroup} id="flt-prim-asama" label="Prime esas aşama" options=${PRIM_STAGES} value=${prim.stage} onChange=${v => setPrim(Object.assign({}, prim, { stage: v }))} />
+      <p className="rule-text"><b>Örnek kural:</b> Prim = “${stageLabel}” aşamasındaki satışların tutarı × ${labelOf(PRIM_RATES, prim.rate)}. Kurumun hedef, kademe, iptal ve iade kurallarıyla değiştirilir.</p>
+    </div>
+    <${Kpis} items=${[
+      { label: "Gönderilen teklif", value: fmtInt(m.teklif) },
+      { label: "Satış (teklif kabul)", value: fmtInt(m.satis), sub: fmtPct(m.rKabul) + " kabul" },
+      { label: "Depozito alınan", value: fmtInt(m.depozito), sub: fmtPct(m.rDep) + " satışların" },
+      { label: "Ödemesi tamamlanan", value: fmtInt(m.odeme), sub: fmtPct(m.rTamam) + " satışların" },
+      { label: "Ödemesi tamamlanan tutar", value: fmtEur(m.odeTutar), sub: "Bekleyen " + fmtEur(m.bekleyenTutar), emph: true },
+      { label: "Örnek prim toplamı", value: fmtEur(total.prim), sub: "Esas " + fmtEur(total.base) }
+    ]} />
+    <div className="flow-grid">
+      <div>
+        <h3 className="block-title">Teklif → Satış → Depozito → Ödeme</h3>
+        ${m.teklif > 0 ? html`<${Funnel} m=${m} def=${def} />` : html`<${Empty} />`}
+      </div>
+      <${BarList} title="Tedavi grubuna göre satış"
+        items=${specRows.map(r => ({ id: r.s.id, label: r.s.label, selected: f.treatment === r.s.id, value: fmtInt(r.m.satis) + " satış", width: r.m.satis / maxSat,
+          sub: "Satış tutarı " + fmtEur(r.m.satisTutar) + " · ödemesi tamamlanan " + fmtEur(r.m.odeTutar) }))} />
+    </div>
+    <div className="subsection">
+      <h3 className="block-title">Temsilci performansı ve örnek prim</h3>
+      <p className="table-note">Dönem, şube, tedavi grubu ve pazar filtreleri uygulanır. Oranlar satış adedine göre hesaplanır. Tutarlar kurgusaldır (EUR).</p>
+      <${CompareTable} label="Temsilci performansı ve örnek prim" minWidth=${940}
+        head=${[{ label: "Temsilci" }, { label: "Teklif" }, { label: "Satış", sub: "Satış / Teklif" }, { label: "Depozito alındı", sub: "Depozito / Satış" },
+          { label: "Ödeme tamamlandı", sub: "Ödeme / Satış" }, { label: "Tamamlanan tutar" }, { label: "Örnek prim", sub: "Esas: " + stageLabel }, { label: "En çok satılan" }]}
+        rows=${reps.map(x => ({ id: x.r.id, label: x.r.label, sub: labelOf(DIM.markets, x.r.market), cells: [
+          numCell(x.m.teklif),
+          { main: fmtInt(x.m.satis), sub: fmtPct(x.m.rKabul) },
+          { main: fmtInt(x.m.depozito), sub: fmtPct(x.m.rDep) },
+          { main: fmtInt(x.m.odeme), sub: fmtPct(x.m.rTamam) },
+          { main: fmtEur(x.m.odeTutar), num: true },
+          { main: fmtEur(x.p.prim), sub: "Esas " + fmtEur(x.p.base) },
+          { main: x.top ? x.top.s.label : "—", sub: x.top ? fmtInt(x.top.m.satis) + " satış" : "" }] }))
+          .concat([{ id: "team", label: "Seçili ekip toplamı", total: true, cells: [
+            numCell(m.teklif), { main: fmtInt(m.satis), sub: fmtPct(m.rKabul) }, { main: fmtInt(m.depozito), sub: fmtPct(m.rDep) },
+            { main: fmtInt(m.odeme), sub: fmtPct(m.rTamam) }, { main: fmtEur(m.odeTutar), num: true },
+            { main: fmtEur(total.prim), sub: "Esas " + fmtEur(total.base) },
+            { main: teamTop ? teamTop.s.label : "—", sub: teamTop ? fmtInt(teamTop.m.satis) + " satış" : "" }] }])} />
+    </div>
+  </div>`;
+}
+
+/* --- Rapor notları: her raporun altında, modelin nasıl kurgulandığı --- */
+const NOTES = {
+  talep: {
+    title: "Demo modeli nasıl kurgulandı?",
+    items: [
+      "Dönem, başvurunun oluşturulduğu aya göre belirlenir.",
+      "Her başvuru için en fazla bir ilişkili randevu kabul edilir.",
+      "Demo kohortlarındaki randevu sonuçları tamamlanmıştır.",
+      "Sayılar benzersiz hasta sayısı olarak sunulmaz."
+    ],
+    foot: "Her filtre kombinasyonunda: Başvuru ≥ Ulaşılan ≥ Oluşturulan randevu ≥ Gerçekleşen randevu. Başvuru kanalı, başvurunun geldiği temas noktasıdır (web formu, telefon, WhatsApp). Başvuruların hangi reklam ve pazarlama kaynağından geldiği de aynı yapı içinde raporlanabilir; örneği “Mecra ve reklam” raporunda."
+  },
+  mecra: {
+    title: "Bu rapor nasıl kurgulandı?",
+    items: [
+      "Her başvuru, CRM'de kayıtlı kaynak bilgisine (UTM parametreleri, form kaynağı, arama takibi) göre tek bir kaynağa atanır.",
+      "Reklam harcamaları platformlardan (Google Ads, Meta) alınır; demodaki tutarlar kurgusaldır.",
+      "Maliyet metrikleri yalnızca ücretli kaynaklar için hesaplanır; organik ve kaynağı bilinmeyen başvurular dağılımda yer alır.",
+      "Kaynak bilgisi olmayan başvuruların payı, ölçümleme kalitesinin bir göstergesidir.",
+      "Gerçek projede son tıklama, ilk temas veya farklı atıf yaklaşımları kurumun ihtiyacına göre karşılaştırılabilir.",
+      "Başvuru ile randevu sonucu kurumun kendi veri ortamında eşleştirilir; hasta bilgileri reklam platformlarına veya GA4'e aktarılmaz."
+    ],
+    foot: "Kaynak toplamları, “Talepten randevuya” raporundaki başvuru, ulaşılan, randevu ve gerçekleşen sayılarıyla birebir aynıdır. Başvuru kanalı filtresi bu rapora uygulanmaz."
+  },
+  tedavi: {
+    title: "Bu rapor nasıl kurgulandı?",
+    items: [
+      "İlk muayene; başvuru takibinden gelen randevularla doğrudan oluşturulan randevuları (online, telefon, hastanede) birlikte içerir.",
+      "Gerçekleşme, öneriden sonraki 60 gün içinde değerlendirilir; demo kohortları tamamlanmıştır.",
+      "Öneri yapılmaması kayıp sayılmaz; her muayene tedavi gerektirmez.",
+      "Kontrol uyumu, önerilen kontrol randevularının gerçekleşme oranıdır."
+    ],
+    foot: "Her filtre kombinasyonunda: Muayene ≥ Öneri ≥ Planlanan ≥ Gerçekleşen."
+  },
+  kapasite: {
+    title: "Tanımlar",
+    items: [
+      "Slot kapasitesi: dönem içinde hekim takvimlerinde açılan muayene slotları (ilk muayene ve kontrol).",
+      "Son dakika boşalan: randevuya 24 saatten az kala iptal edilen slotlar.",
+      "Kullanılan slot = Verilen − Son dakika boşalan + Yeniden doldurulan.",
+      "İlk uygun randevu: talep anında önerilebilen en yakın tarihe kalan gün; talep başına ortalama."
+    ],
+    foot: "Her filtre kombinasyonunda: Kapasite ≥ Kullanılan slot ve Boşalan ≥ Yeniden doldurulan."
+  },
+  satis: {
+    title: "Bu rapor nasıl kurgulandı?",
+    items: [
+      "Satış, teklifin kabul edildiği an olarak kaydedilir; depozito ve ödeme aynı satış kaydına bağlanır.",
+      "Tutarlar ve prim kuralı kurgusaldır (EUR); gerçek projede kurumun hedef, kademe, iptal ve iade kuralları uygulanır.",
+      "Temsilciler ve pazarlar örnek amaçlıdır.",
+      "Bu raporda branş yerine uluslararası hasta tedavi grupları kullanılır."
+    ],
+    foot: "Her filtre kombinasyonunda: Teklif ≥ Satış ≥ Depozito ≥ Ödeme."
+  }
+};
+
+function Notes({ n }) {
+  return html`<aside className="panel-notes" aria-label=${n.title}>
+    <h3>${n.title}</h3>
+    <ul>${n.items.map(a => html`<li key=${a}>${a}</li>`)}</ul>
+    ${n.foot ? html`<p className="inv">${n.foot}</p>` : null}
+  </aside>`;
+}
+
+function Panel() {
+  const [f, setF] = useState(DEFAULT_FILTER);
+  const [tab, setTab] = useState("talep");
+  const [prim, setPrim] = useState({ rate: "0.02", stage: "odeme" });
+  const tabRefs = useRef({});
+  const navRef = useRef(null);
+  const set = k => v => setF(prev => Object.assign({}, prev, { [k]: v }));
+  const idx = PANEL_TABS.findIndex(t => t.id === tab);
+  const next = PANEL_TABS[(idx + 1) % PANEL_TABS.length];
+
+  useEffect(() => { // seçili kartı yatay şeritte görünür tut (mobil)
+    const el = tabRefs.current[tab];
+    if (el && el.parentElement && el.parentElement.scrollWidth > el.parentElement.clientWidth) {
+      el.parentElement.scrollTo({ left: Math.max(0, el.offsetLeft - 8), behavior: reduceMotion() ? "auto" : "smooth" });
+    }
+  }, [tab]);
+
+  const onTabKey = e => {
+    const keys = ["ArrowRight", "ArrowLeft", "Home", "End"];
+    if (keys.indexOf(e.key) < 0) return;
+    e.preventDefault();
+    let n = idx;
+    if (e.key === "ArrowRight") n = (idx + 1) % PANEL_TABS.length;
+    if (e.key === "ArrowLeft") n = (idx - 1 + PANEL_TABS.length) % PANEL_TABS.length;
+    if (e.key === "Home") n = 0;
+    if (e.key === "End") n = PANEL_TABS.length - 1;
+    setTab(PANEL_TABS[n].id);
+    const el = tabRefs.current[PANEL_TABS[n].id];
+    if (el) el.focus();
+  };
+  const goNext = () => {
+    setTab(next.id);
+    if (navRef.current) navRef.current.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+    const el = tabRefs.current[next.id];
+    if (el) el.focus({ preventScroll: true });
+  };
+  const p = COPY.panel;
+  return html`<section className="section panel-band" id="ornek-panel" aria-labelledby="panel-h">
+    <div className="wrap">
+      <div className="section-head" style=${{ maxWidth: "860px" }}>
+        <h2 id="panel-h">${p.title}</h2>
+        <p>${p.desc}</p>
+        <div className="panel-labels"><span className="demo-chip">${p.label}</span><p>${p.note}</p></div>
+      </div>
+      <div className="panel">
+        <div className="report-nav" ref=${navRef}>
+          <div className="report-nav-head">
+            <strong>${PANEL_TABS.length} rapor · aynı veri modeli</strong>
+            <span>Raporlar arasında geçmek için bir karta tıklayın.</span>
+          </div>
+          <div className="tabs" role="tablist" aria-label="Raporlar">
+            ${PANEL_TABS.map((t, i) => html`<button key=${t.id} id=${"tab-" + t.id} ref=${el => (tabRefs.current[t.id] = el)} role="tab" type="button" className="tab"
+              aria-selected=${tab === t.id} aria-controls="tp-panel" tabIndex=${tab === t.id ? 0 : -1}
+              onClick=${() => setTab(t.id)} onKeyDown=${onTabKey}>
+              <span className="tab-num" aria-hidden="true">${i + 1} / ${PANEL_TABS.length}</span>
+              <span className="tab-title">${t.label}</span>
+              <span className="tab-sub">${t.sub}</span>
+            </button>`)}
+          </div>
+        </div>
+        <div className="filters" aria-label="Filtreler">
+          <${FilterGroup} id="flt-donem" label="Dönem" options=${DIM.periods} value=${f.period} onChange=${set("period")} />
+          <${FilterGroup} id="flt-sube" label="Şube" options=${ALL_BRANCH} value=${f.branch} onChange=${set("branch")} />
+          ${tab === "satis"
+            ? html`<${FilterGroup} id="flt-tedavi" label="Tedavi grubu" options=${ALL_TR} value=${f.treatment} onChange=${set("treatment")} />`
+            : html`<${FilterGroup} id="flt-brans" label="Branş" options=${ALL_SPEC} value=${f.specialty} onChange=${set("specialty")} />`}
+        </div>
+        <div className="tabpanel" id="tp-panel" role="tabpanel" aria-labelledby=${"tab-" + tab}>
+          ${tab === "talep" ? html`<${TabTalep} f=${f} set=${set} />` : null}
+          ${tab === "mecra" ? html`<${TabMecra} f=${f} />` : null}
+          ${tab === "tedavi" ? html`<${TabTedavi} f=${f} />` : null}
+          ${tab === "kapasite" ? html`<${TabKapasite} f=${f} />` : null}
+          ${tab === "satis" ? html`<${TabSatis} f=${f} set=${set} prim=${prim} setPrim=${setPrim} />` : null}
+          <div className="report-next">
+            <span className="muted">Rapor ${idx + 1} / ${PANEL_TABS.length}</span>
+            <button type="button" className="btn btn-ghost btn-sm" onClick=${goNext}>${idx === PANEL_TABS.length - 1 ? "İlk rapora dön" : "Sonraki rapor"}: ${next.label} <span aria-hidden="true">→</span></button>
+          </div>
+          <${Notes} n=${NOTES[tab]} />
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function Sources() {
+  const c = COPY.sources;
+  return html`<section className="section" id="veri-kaynaklari" aria-labelledby="kaynak-h">
+    <div className="wrap">
+      <div className="section-head"><h2 id="kaynak-h">${c.title}</h2><p>${c.intro}</p></div>
+      <ul className="sources">
+        ${c.items.map(s => html`<li className="source" key=${s.t}>
+          <h3>${s.t}</h3><p>${s.d}</p>
+          <div className="feeds" aria-label="Beslediği raporlar">${s.feeds.map(x => html`<span key=${x}>${x}</span>`)}</div>
+        </li>`)}
+      </ul>
+      <p className="sources-note">${c.note}</p>
+    </div>
+  </section>`;
+}
+
+function Process() {
+  const c = COPY.process;
+  return html`<section className="section" id="nasil-calisiyoruz" aria-labelledby="surec-h" style=${{ paddingTop: 0 }}>
+    <div className="wrap">
+      <div className="section-head"><h2 id="surec-h">${c.title}</h2></div>
+      <ol className="steps">
+        ${c.steps.map((s, i) => html`<li className="step" key=${s.t}>
+          <span className="step-num" aria-hidden="true">${i + 1}</span>
+          <h3><span className="sr-only">Adım ${i + 1}: </span>${s.t}</h3>
+          <p>${s.d}</p>
+        </li>`)}
+      </ol>
+      <p className="steps-note">${c.note}</p>
+    </div>
+  </section>`;
+}
+
+function Pilot() {
+  const c = COPY.pilot;
+  return html`<section className="section pilot-band" id="ilk-proje" aria-labelledby="pilot-h">
+    <div className="wrap pilot">
+      <div>
+        <h2 id="pilot-h" className="h2-plain">${c.title}</h2>
+        <strong className="pilot-name">${c.name}</strong>
+        <p className="pilot-desc">${c.desc}</p>
+        <p className="pilot-note">${c.note}</p>
+      </div>
+      <div className="deliver">
+        <h3>${c.outputsTitle}</h3>
+        <ul>${c.outputs.map(o => html`<li key=${o}><span aria-hidden="true">✓</span>${o}</li>`)}</ul>
+      </div>
+    </div>
+  </section>`;
+}
+
+function DataApproach() {
+  const c = COPY.data;
+  return html`<section className="section" id="veri-yaklasimi" aria-labelledby="veri-h">
+    <div className="wrap">
+      <div className="section-head" style=${{ marginBottom: "24px" }}><h2 id="veri-h">${c.title}</h2></div>
+      <div className="data-grid">
+        <p className="data-text">${c.text}</p>
+        <div className="demo-list"><h3>${c.demoTitle}</h3><ul>${c.demo.map(d => html`<li key=${d}>${d}</li>`)}</ul></div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function Final({ onOpen }) {
+  const c = COPY.final;
+  return html`<section className="final" id="tanisalim" aria-labelledby="final-h">
+    <div className="wrap final-inner">
+      <div><h2 id="final-h">${c.title}</h2><p>${c.text}</p></div>
+      <div className="final-actions"><${CtaButton} label=${c.button} className="btn btn-band" onOpen=${onOpen} /></div>
+    </div>
+  </section>`;
+}
+
+function MeetingModal({ onClose }) {
+  const closeRef = useRef(null);
+  const boxRef = useRef(null);
+  useEffect(() => {
+    const prev = document.activeElement;
+    if (closeRef.current) closeRef.current.focus();
+    const onKey = e => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "Tab" && boxRef.current) {
+        const els = boxRef.current.querySelectorAll("button, a[href]");
+        if (!els.length) return;
+        const first = els[0], last = els[els.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => { window.removeEventListener("keydown", onKey); if (prev && prev.focus) prev.focus(); };
+  }, []);
+  const c = COPY.modal;
+  return html`<div className="overlay" onClick=${e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-h" ref=${boxRef}>
+      <h2 id="modal-h">${c.title}</h2>
+      <p className="lead">${c.lead}</p>
+      <ul>${c.items.map(i => html`<li key=${i}>${i}</li>`)}</ul>
+      <p className="muted" style=${{ marginTop: "14px", fontSize: ".93rem" }}>${c.privacy}</p>
+      <div className="status" role="status"><strong>${c.noLink}</strong></div>
+      <div className="modal-actions"><button type="button" className="btn btn-ghost" ref=${closeRef} onClick=${onClose}>Kapat</button></div>
+    </div>
+  </div>`;
+}
+
+function App() {
+  const [modal, setModal] = useState(false);
+  const open = () => setModal(true);
+  return html`<${React.Fragment}>
+    <${Header} />
+    <main>
+      <${Hero} onOpen=${open} />
+      <${Questions} />
+      <${Panel} />
+      <${Sources} />
+      <${Process} />
+      <${Pilot} />
+      <${DataApproach} />
+      <${Final} onOpen=${open} />
+    </main>
+    <footer className="site-footer">
+      <div className="wrap">
+        <span className="logo"><span className="logo-a">Data</span><span className="logo-b">Coaches</span></span>
+        <span>Veri analitiği ve BI danışmanlığı</span>
+      </div>
+    </footer>
+    ${modal ? html`<${MeetingModal} onClose=${() => setModal(false)} />` : null}
+  <//>`;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App} />`);
+
+</script>
+
+</body>
+</html>
